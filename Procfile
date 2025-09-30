@@ -1,0 +1,1 @@
+web: gunicorn genosaur_project.wsgi
