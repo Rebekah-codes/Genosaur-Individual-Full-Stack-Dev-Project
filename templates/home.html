@@ -8,11 +8,11 @@
 			<div class="col-md-4 mb-4">
 				<div class="card shadow-sm h-100 text-center">
 					{% if egg.is_hatched and egg.dinosaur %}
-						<!-- Cracked egg sprite -->
+						<!-- Cracked egg sprite with dino info -->
 						<img src="{% static 'images/egg_cracked.png' %}" 
-								 class="card-img-top mx-auto d-block mt-3" 
-								 alt="Cracked Egg" 
-								 style="max-width: 150px;">
+							 class="card-img-top mx-auto d-block mt-3" 
+							 alt="Cracked Egg" 
+							 style="max-width: 150px;">
 						<div class="card-body">
 							<h5 class="card-title">
 								<a href="{% url 'dinosaur_detail' egg.dinosaur.id %}">
@@ -24,12 +24,22 @@
 								Mood: {{ egg.dinosaur.mood }}
 							</p>
 						</div>
+					{% elif egg.is_hatched %}
+						<!-- Cracked egg sprite, but no dino info yet -->
+						<img src="{% static 'images/egg_cracked.png' %}" 
+							 class="card-img-top mx-auto d-block mt-3" 
+							 alt="Cracked Egg" 
+							 style="max-width: 150px;">
+						<div class="card-body">
+							<h5 class="card-title">Hatched!</h5>
+							<p class="card-text">Your dino is being created...</p>
+						</div>
 					{% else %}
 						<!-- Unhatched egg sprite -->
 						<img src="{% static 'images/egg.png' %}" 
-								 class="card-img-top mx-auto d-block mt-3" 
-								 alt="Egg sprite" 
-								 style="max-width: 150px;">
+							 class="card-img-top mx-auto d-block mt-3" 
+							 alt="Egg sprite" 
+							 style="max-width: 150px;">
 						<div class="card-body">
 							<h5 class="card-title">{{ egg.species_name }}</h5>
 							<p class="card-text">
