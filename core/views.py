@@ -6,8 +6,13 @@ from .models import Egg, Dinosaur, RaiseAction, Trait
 # Homepage: show all eggs
 # Optionally filter: eggs = Egg.objects.filter(is_hatched=False)
 def home(request):
-    eggs = Egg.objects.all().select_related('dinosaur')
-    return render(request, 'home.html', {'eggs': eggs})
+    try:
+        eggs = Egg.objects.all().select_related('dinosaur')
+        return render(request, 'home.html', {'eggs': eggs})
+    except Exception as e:
+        import logging
+        logging.error(f"Error in home view: {e}")
+        return render(request, 'home.html', {'eggs': [], 'error': str(e)})
 
 # Hatch egg view
 def hatch_egg(request, egg_id):
