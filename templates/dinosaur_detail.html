@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow-sm mx-auto" style="max-width: 600px;">
+  <div class="card-body text-center">
+    <h2 class="card-title">🦕 {{ dino.name }}</h2>
+    <p class="lead">{{ dino.species_name }}</p>
+    <p>
+      <strong>Stage:</strong> {{ dino.stage }}<br>
+      <strong>Mood:</strong> {{ dino.mood }}
+    </p>
+
+    <h4 class="mt-4">Traits</h4>
+    {% if dino.traits.all %}
+      <ul class="list-group mb-3">
+        {% for trait in dino.traits.all %}
+          <li class="list-group-item">
+            <strong>{{ trait.name }}</strong> — {{ trait.description }}
+            {% if trait.mood_impact %}
+              <span class="badge bg-info text-dark">{{ trait.mood_impact }}</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No traits unlocked yet.</p>
+    {% endif %}
+
+    <h4 class="mt-4">Recent Actions</h4>
+    {% if actions %}
+      <ul class="list-group">
+        {% for action in actions %}
+          <li class="list-group-item">
+            <strong>{{ action.get_action_type_display }}</strong> → {{ action.outcome }}
+            <br><small class="text-muted">{{ action.created_at|date:"M d, Y H:i" }}</small>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No actions yet. Try feeding, playing, or training!</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

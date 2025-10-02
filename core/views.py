@@ -25,3 +25,12 @@ def hatch_egg(request, egg_id):
             owner=egg.owner
         )
     return redirect('home')
+
+# Dino profile view
+def dinosaur_detail(request, dino_id):
+    dino = get_object_or_404(Dinosaur, id=dino_id)
+    actions = dino.actions.order_by('-created_at') if hasattr(dino, 'actions') else []
+    return render(request, 'dinosaur_detail.html', {
+        'dino': dino,
+        'actions': actions
+    })
