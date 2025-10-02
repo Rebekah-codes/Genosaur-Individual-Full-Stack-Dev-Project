@@ -10,8 +10,33 @@
       <strong>Mood:</strong> {{ dino.mood }}
     </p>
 
+    <!-- Dino sprite -->
+    <img src="{% static dino.get_sprite %}"
+         alt="{{ dino.stage }} sprite"
+         class="img-fluid mb-3 evolve-sprite"
+         style="max-width: 200px;">
+
+    <!-- Progress Bars -->
+    <h4 class="mt-4">Progression</h4>
+    <p>Feeds until evolution ({{ feed_progress }}/{{ feeds_needed }})</p>
+    <div class="progress mb-3">
+      <div class="progress-bar bg-success" role="progressbar"
+           style="width: {{ feed_percent }}%"
+           aria-valuenow="{{ feed_progress }}" aria-valuemin="0" aria-valuemax="{{ feeds_needed }}">
+        {{ feed_progress }}/{{ feeds_needed }}
+      </div>
+    </div>
+    <p>Actions until trait unlock ({{ action_progress }}/{{ actions_needed }})</p>
+    <div class="progress mb-4">
+      <div class="progress-bar bg-info" role="progressbar"
+           style="width: {{ action_percent }}%"
+           aria-valuenow="{{ action_progress }}" aria-valuemin="0" aria-valuemax="{{ actions_needed }}">
+        {{ action_progress }}/{{ actions_needed }}
+      </div>
+    </div>
+
     <!-- Perform Action Form -->
-    <h4 class="mt-4">Interact with {{ dino.name }}</h4>
+    <h4>Interact with {{ dino.name }}</h4>
     <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
       {% csrf_token %}
       <div class="input-group">

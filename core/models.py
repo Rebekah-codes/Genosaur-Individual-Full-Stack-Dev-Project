@@ -67,6 +67,15 @@ class Dinosaur(models.Model):
     def __str__(self):
         return f"🦕 {self.name} ({self.stage}, {self.mood})"
 
+    def get_sprite(self):
+        """Return the relative static path for the dino's current stage sprite."""
+        stage_sprites = {
+            "hatchling": "images/hatchling.png",
+            "juvenile": "images/juvenile.png",
+            "adult": "images/adult.png",
+        }
+        return stage_sprites.get(self.stage, "images/hatchling.png")
+
 
 class RaiseAction(models.Model):
     ACTION_CHOICES = [
