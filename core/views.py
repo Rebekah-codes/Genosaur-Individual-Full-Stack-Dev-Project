@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.crypto import get_random_string
+from django.contrib import messages  # for toast notifications
 from .models import Egg, Dinosaur, RaiseAction, Trait
 
 # Homepage: show all eggs
@@ -66,23 +67,25 @@ def perform_action(request, dino_id):
         if action_type == "feed":
             outcome = f"{dino.name} enjoyed a tasty meal!"
             dino.mood = "happy"
-            # Progression: evolve after 3 feeds
             if dino.stage == "hatchling" and feed_actions + 1 >= 3:
                 dino.stage = "juvenile"
                 outcome += f" 🌱 {dino.name} has grown into a Juvenile!"
+                messages.success(request, f"{dino.name} evolved into a Juvenile!")
         elif action_type == "play":
             outcome = f"{dino.name} had fun playing!"
             dino.mood = "playful"
         elif action_type == "train":
             outcome = f"{dino.name} trained hard and grew stronger!"
             dino.mood = "tired"
+            dino.level_up()  # training increases level
+            if dino.level == 100:
+                messages.success(request, f"{dino.name} reached the max level 100!")
         dino.save()
         RaiseAction.objects.create(
             dinosaur=dino,
             action_type=action_type,
             outcome=outcome
         )
-        # Progression: unlock a trait after 5 total actions
         if total_actions + 1 == 5:
             trait = Trait.objects.first()
             if trait:
@@ -93,4 +96,5 @@ def perform_action(request, dino_id):
                     action_type="train",
                     outcome=f"{dino.name} unlocked a new trait: {trait.name}!"
                 )
+                messages.success(request, f"{dino.name} unlocked a new trait: {trait.name}!")
     return redirect("dinosaur_detail", dino_id=dino.id)

@@ -63,6 +63,7 @@ class Dinosaur(models.Model):
         related_name='dinosaurs'
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    level = models.PositiveIntegerField(default=1)
 
     def __str__(self):
         return f"🦕 {self.name} ({self.stage}, {self.mood})"
@@ -75,6 +76,11 @@ class Dinosaur(models.Model):
             "adult": "images/adult.png",
         }
         return stage_sprites.get(self.stage, "images/hatchling.png")
+
+    def level_up(self, amount=1):
+        """Increase level but cap at 100."""
+        self.level = min(self.level + amount, 100)
+        self.save()
 
 
 class RaiseAction(models.Model):
