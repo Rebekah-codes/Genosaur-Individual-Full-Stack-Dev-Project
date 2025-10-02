@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.crypto import get_random_string
-from .models import Egg, Dinosaur, RaiseAction
+from .models import Egg, Dinosaur, RaiseAction, Trait
 
 # Homepage: show all eggs
 # Optionally filter: eggs = Egg.objects.filter(is_hatched=False)
@@ -40,22 +40,38 @@ def perform_action(request, dino_id):
     dino = get_object_or_404(Dinosaur, id=dino_id)
     if request.method == "POST":
         action_type = request.POST.get("action_type")
-        # Simple outcome logic
+        outcome = "Nothing happened."
+        total_actions = dino.actions.count()
+        feed_actions = dino.actions.filter(action_type="feed").count()
+
         if action_type == "feed":
             outcome = f"{dino.name} enjoyed a tasty meal!"
             dino.mood = "happy"
+            # Progression: evolve after 3 feeds
+            if dino.stage == "hatchling" and feed_actions + 1 >= 3:
+                dino.stage = "juvenile"
+                outcome += f" 🌱 {dino.name} has grown into a Juvenile!"
         elif action_type == "play":
             outcome = f"{dino.name} had fun playing!"
             dino.mood = "playful"
         elif action_type == "train":
             outcome = f"{dino.name} trained hard and grew stronger!"
-            dino.stage = "juvenile" if dino.stage == "hatchling" else dino.stage
-        else:
-            outcome = "Nothing happened."
+            dino.mood = "tired"
         dino.save()
         RaiseAction.objects.create(
             dinosaur=dino,
             action_type=action_type,
             outcome=outcome
         )
+        # Progression: unlock a trait after 5 total actions
+        if total_actions + 1 == 5:
+            trait = Trait.objects.first()
+            if trait:
+                dino.traits.add(trait)
+                dino.save()
+                RaiseAction.objects.create(
+                    dinosaur=dino,
+                    action_type="train",
+                    outcome=f"{dino.name} unlocked a new trait: {trait.name}!"
+                )
     return redirect("dinosaur_detail", dino_id=dino.id)
