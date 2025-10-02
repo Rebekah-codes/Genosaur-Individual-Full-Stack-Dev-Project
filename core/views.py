@@ -30,7 +30,6 @@ def hatch_egg(request, egg_id):
 def dinosaur_detail(request, dino_id):
     dino = get_object_or_404(Dinosaur, id=dino_id)
     actions = dino.actions.order_by('-timestamp')
-    # Progression counters
     total_actions = dino.actions.count()
     feed_actions = dino.actions.filter(action_type="feed").count()
     feeds_needed = 3
@@ -40,6 +39,8 @@ def dinosaur_detail(request, dino_id):
     # Calculate percent for progress bars
     feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
     action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
+    feed_complete = feed_progress >= feeds_needed
+    action_complete = action_progress >= actions_needed
     return render(request, 'dinosaur_detail.html', {
         'dino': dino,
         'actions': actions,
@@ -49,6 +50,8 @@ def dinosaur_detail(request, dino_id):
         'actions_needed': actions_needed,
         'feed_percent': feed_percent,
         'action_percent': action_percent,
+        'feed_complete': feed_complete,
+        'action_complete': action_complete,
     })
 
 # Perform feed/play/train action
