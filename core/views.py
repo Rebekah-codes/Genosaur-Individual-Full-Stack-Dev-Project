@@ -1,7 +1,45 @@
+from django.contrib.auth import logout as auth_logout
+# Logout view
+def logout_view(request):
+    auth_logout(request)
+    messages.success(request, 'You have been logged out successfully.')
+    return redirect('home')
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login as auth_login
+# Login view
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            auth_login(request, user)
+            messages.success(request, 'Login successful!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'login.html', {'form': form})
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.crypto import get_random_string
 from django.contrib import messages  # for toast notifications
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from .models import Egg, Dinosaur, RaiseAction, Trait
+# Registration view
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Registration successful!')
+            return redirect('home')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = UserCreationForm()
+    return render(request, 'register.html', {'form': form})
 
 # Homepage: show all eggs
 # Optionally filter: eggs = Egg.objects.filter(is_hatched=False)

@@ -6,4 +6,7 @@ urlpatterns = [
     path('hatch/<int:egg_id>/', views.hatch_egg, name='hatch_egg'),
     path('dinosaur/<int:dino_id>/', views.dinosaur_detail, name='dinosaur_detail'),
     path('dinosaur/<int:dino_id>/action/', views.perform_action, name='perform_action'),
+    path('register/', views.register, name='register'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 ]
