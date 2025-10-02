@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.crypto import get_random_string
-from .models import Egg, Dinosaur
+from .models import Egg, Dinosaur, RaiseAction
 
 # Homepage: show all eggs
 # Optionally filter: eggs = Egg.objects.filter(is_hatched=False)
@@ -29,8 +29,33 @@ def hatch_egg(request, egg_id):
 # Dino profile view
 def dinosaur_detail(request, dino_id):
     dino = get_object_or_404(Dinosaur, id=dino_id)
-    actions = dino.actions.order_by('-created_at') if hasattr(dino, 'actions') else []
+    actions = dino.actions.order_by('-timestamp')
     return render(request, 'dinosaur_detail.html', {
         'dino': dino,
         'actions': actions
     })
+
+# Perform feed/play/train action
+def perform_action(request, dino_id):
+    dino = get_object_or_404(Dinosaur, id=dino_id)
+    if request.method == "POST":
+        action_type = request.POST.get("action_type")
+        # Simple outcome logic
+        if action_type == "feed":
+            outcome = f"{dino.name} enjoyed a tasty meal!"
+            dino.mood = "happy"
+        elif action_type == "play":
+            outcome = f"{dino.name} had fun playing!"
+            dino.mood = "playful"
+        elif action_type == "train":
+            outcome = f"{dino.name} trained hard and grew stronger!"
+            dino.stage = "juvenile" if dino.stage == "hatchling" else dino.stage
+        else:
+            outcome = "Nothing happened."
+        dino.save()
+        RaiseAction.objects.create(
+            dinosaur=dino,
+            action_type=action_type,
+            outcome=outcome
+        )
+    return redirect("dinosaur_detail", dino_id=dino.id)

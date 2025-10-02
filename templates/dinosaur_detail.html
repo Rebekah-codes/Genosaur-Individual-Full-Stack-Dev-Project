@@ -10,6 +10,21 @@
       <strong>Mood:</strong> {{ dino.mood }}
     </p>
 
+    <!-- Perform Action Form -->
+    <h4 class="mt-4">Interact with {{ dino.name }}</h4>
+    <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
+      {% csrf_token %}
+      <div class="input-group">
+        <select name="action_type" class="form-select">
+          <option value="feed">Feed</option>
+          <option value="play">Play</option>
+          <option value="train">Train</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Do Action</button>
+      </div>
+    </form>
+
+    <!-- Traits -->
     <h4 class="mt-4">Traits</h4>
     {% if dino.traits.all %}
       <ul class="list-group mb-3">
@@ -26,13 +41,14 @@
       <p>No traits unlocked yet.</p>
     {% endif %}
 
+    <!-- Recent Actions -->
     <h4 class="mt-4">Recent Actions</h4>
     {% if actions %}
       <ul class="list-group">
         {% for action in actions %}
           <li class="list-group-item">
             <strong>{{ action.get_action_type_display }}</strong> → {{ action.outcome }}
-            <br><small class="text-muted">{{ action.created_at|date:"M d, Y H:i" }}</small>
+            <br><small class="text-muted">{{ action.timestamp|date:"M d, Y H:i" }}</small>
           </li>
         {% endfor %}
       </ul>
