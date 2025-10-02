@@ -1,38 +1,71 @@
 from django.db import models
 from django.conf import settings
 
+
 class Egg(models.Model):
     species_name = models.CharField(max_length=100)
-    element_type = models.CharField(max_length=50)
-    rarity = models.CharField(max_length=50)
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='eggs')
+    element_type = models.CharField(max_length=50)   # e.g. Fire, Water, Earth
+    rarity = models.CharField(max_length=50)         # e.g. Common, Rare, Legendary
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='eggs'
+    )
     is_hatched = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.species_name} ({self.rarity})"
+        return f"🥚 {self.species_name} Egg ({self.rarity})"
 
 
 class Trait(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
+    mood_impact = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="How this trait influences mood (e.g. +Playful, -Calm)"
+    )
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.mood_impact})" if self.mood_impact else self.name
 
 
 class Dinosaur(models.Model):
+    STAGE_CHOICES = [
+        ('hatchling', 'Hatchling'),
+        ('juvenile', 'Juvenile'),
+        ('adult', 'Adult'),
+    ]
+
+    MOOD_CHOICES = [
+        ('happy', 'Happy'),
+        ('hungry', 'Hungry'),
+        ('playful', 'Playful'),
+        ('tired', 'Tired'),
+    ]
+
     name = models.CharField(max_length=100)
     species_name = models.CharField(max_length=100)
-    stage = models.CharField(max_length=50)
-    mood = models.CharField(max_length=50)
+    stage = models.CharField(max_length=20, choices=STAGE_CHOICES, default='hatchling')
+    mood = models.CharField(max_length=20, choices=MOOD_CHOICES, default='happy')
     traits = models.ManyToManyField(Trait, blank=True, related_name='dinosaurs')
-    egg = models.ForeignKey(Egg, on_delete=models.SET_NULL, null=True, related_name='dinosaur')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='dinosaurs')
+    egg = models.OneToOneField(
+        Egg,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='dinosaur'
+    )
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='dinosaurs'
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} ({self.stage})"
+        return f"🦕 {self.name} ({self.stage}, {self.mood})"
 
 
 class RaiseAction(models.Model):
@@ -58,8 +91,16 @@ class Trade(models.Model):
         ('declined', 'Declined'),
     ]
 
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_trades')
-    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_trades')
+    sender = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='sent_trades'
+    )
+    receiver = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='received_trades'
+    )
     dinosaur = models.ForeignKey(Dinosaur, on_delete=models.CASCADE, related_name='trades')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)

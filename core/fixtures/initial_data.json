@@ -1,0 +1,58 @@
+[
+  {
+    "model": "yourapp.egg",
+    "pk": 1,
+    "fields": {
+      "species_name": "Tyrannosaur",
+      "element_type": "Earth",
+      "rarity": "Common",
+      "owner": 1,
+      "is_hatched": false,
+      "created_at": "2025-10-02T12:00:00Z"
+    }
+  },
+  {
+    "model": "yourapp.egg",
+    "pk": 2,
+    "fields": {
+      "species_name": "Pteranodon",
+      "element_type": "Air",
+      "rarity": "Rare",
+      "owner": 1,
+      "is_hatched": false,
+      "created_at": "2025-10-02T12:05:00Z"
+    }
+  },
+  {
+    "model": "yourapp.trait",
+    "pk": 1,
+    "fields": {
+      "name": "Playful",
+      "description": "This dino loves to play and explore.",
+      "mood_impact": "+Playful"
+    }
+  },
+  {
+    "model": "yourapp.trait",
+    "pk": 2,
+    "fields": {
+      "name": "Calm",
+      "description": "This dino is steady and relaxed.",
+      "mood_impact": "+Calm"
+    }
+  },
+  {
+    "model": "yourapp.dinosaur",
+    "pk": 1,
+    "fields": {
+      "name": "Rexy",
+      "species_name": "Tyrannosaur",
+      "stage": "hatchling",
+      "mood": "happy",
+      "traits": [1],
+      "egg": 1,
+      "owner": 1,
+      "created_at": "2025-10-02T12:10:00Z"
+    }
+  }
+]
