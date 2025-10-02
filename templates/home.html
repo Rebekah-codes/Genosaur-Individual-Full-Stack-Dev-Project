@@ -1,6 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1 class="text-center">🦖 Welcome to Genosaur</h1>
-<p class="lead text-center">Hatch, raise, and trade your elemental dinosaurs.</p>
+	<h1 class="text-center mb-4">� Your Eggs</h1>
+
+	<div class="row">
+		{% for egg in eggs %}
+			<div class="col-md-4 mb-4">
+				<div class="card shadow-sm h-100 text-center">
+					<!-- Egg sprite -->
+					<img src="{% static 'images/egg.png' %}" 
+							 class="card-img-top mx-auto d-block mt-3" 
+							 alt="Egg sprite" 
+							 style="max-width: 150px;">
+
+					<div class="card-body">
+						<h5 class="card-title">{{ egg.species_name }}</h5>
+						<p class="card-text">
+							Element: <span class="badge bg-info text-dark">{{ egg.element_type }}</span><br>
+							Rarity: <span class="badge bg-secondary">{{ egg.rarity }}</span>
+						</p>
+
+						{% if egg.is_hatched %}
+							<span class="badge bg-success">Hatched</span>
+						{% else %}
+							<form method="POST" action="{% url 'hatch_egg' egg.id %}">
+								{% csrf_token %}
+								<button class="btn btn-success">Hatch</button>
+							</form>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		{% empty %}
+			<p class="text-center">No eggs yet — time to earn your first one!</p>
+		{% endfor %}
+	</div>
 {% endblock %}
