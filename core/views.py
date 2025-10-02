@@ -42,6 +42,7 @@ def dinosaur_detail(request, dino_id):
     action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
     feed_complete = feed_progress >= feeds_needed
     action_complete = action_progress >= actions_needed
+    level_percent = int((dino.level / 100) * 100)
     return render(request, 'dinosaur_detail.html', {
         'dino': dino,
         'actions': actions,
@@ -53,6 +54,7 @@ def dinosaur_detail(request, dino_id):
         'action_percent': action_percent,
         'feed_complete': feed_complete,
         'action_complete': action_complete,
+        'level_percent': level_percent,
     })
 
 # Perform feed/play/train action

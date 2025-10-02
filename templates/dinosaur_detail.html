@@ -16,6 +16,16 @@
          class="img-fluid mb-3 evolve-sprite"
          style="max-width: 200px;">
 
+    <!-- Level Progress -->
+    <p>Level {{ dino.level }}/100</p>
+    <div class="progress mb-4">
+      <div class="progress-bar bg-primary" role="progressbar"
+           style="width: {{ level_percent }}%"
+           aria-valuenow="{{ dino.level }}" aria-valuemin="0" aria-valuemax="100">
+        {{ dino.level }}/100
+      </div>
+    </div>
+
     <!-- Progress Bars -->
     <h4 class="mt-4">Progression</h4>
     <p>Feeds until evolution ({{ feed_progress }}/{{ feeds_needed }})</p>
