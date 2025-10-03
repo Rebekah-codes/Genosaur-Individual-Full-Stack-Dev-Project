@@ -1,9 +1,16 @@
+# Imports
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.utils.crypto import get_random_string
+from django.contrib import messages  # for toast notifications
+from .models import Egg, Dinosaur, RaiseAction, Trait
+
 # Dashboard page for logged-in users
 @login_required
 def dashboard(request):
     return render(request, 'dashboard.html')
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 # Landing page for unauthenticated users
 def landing(request):
     if request.user.is_authenticated:
