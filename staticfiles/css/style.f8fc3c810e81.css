@@ -1,0 +1,26 @@
+h1 {
+    color: red;
+}
+
+body {
+  background-color: #E7D6B9;
+}
+
+@keyframes pulse {
+  0%   { transform: scale(1); opacity: 1; }
+  50%  { transform: scale(1.05); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.progress-bar.pulse {
+  animation: pulse 1.5s infinite;
+}
+
+.navbar-custom {
+  background-color: #A6895B !important;
+}
+
+.card-brown {
+  background-color: #A6895B !important;
+  color: #fff;
+}
