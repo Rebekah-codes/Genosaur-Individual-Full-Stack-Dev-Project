@@ -15,3 +15,7 @@ body {
 .progress-bar.pulse {
   animation: pulse 1.5s infinite;
 }
+
+.navbar-custom {
+  background-color: #A6895B !important;
+}
