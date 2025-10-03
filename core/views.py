@@ -60,7 +60,15 @@ def egg_detail(request, egg_id):
             egg.save()
             message = 'Congratulations! Your egg has hatched!'
         elif request.method == 'POST':
-            if 'search_wilderness' in request.POST:
+            if 'set_egg_name' in request.POST:
+                new_name = request.POST.get('egg_name', '').strip()
+                if new_name:
+                    egg.name = new_name
+                    egg.save()
+                    message = f"Egg named '{new_name}'!"
+                else:
+                    message = "Egg name cannot be empty."
+            elif 'search_wilderness' in request.POST:
                 found = random.choice(['twig', 'leaf', None, None])  # 50% chance
                 if found == 'twig':
                     egg.twigs += 1

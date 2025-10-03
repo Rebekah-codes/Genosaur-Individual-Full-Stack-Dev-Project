@@ -18,6 +18,17 @@
                 <p>Status: {% if egg.is_hatched %}Hatched{% else %}Not Hatched{% endif %}</p>
                 <p>Twigs: {{ egg.twigs }} / 5</p>
                 <p>Leaves: {{ egg.leaves }} / 5</p>
+
+                <!-- Egg naming form -->
+                <form method="post" action="" class="mb-3">
+                    {% csrf_token %}
+                    <div class="mb-2">
+                        <label for="egg_name" class="form-label">Egg Name:</label>
+                        <input type="text" id="egg_name" name="egg_name" class="form-control" value="{{ egg.name }}" maxlength="100" placeholder="Give your egg a name...">
+                    </div>
+                    <button type="submit" name="set_egg_name" class="btn btn-warning">Set Name</button>
+                </form>
+
                 {% if egg.is_hatched %}
                     <div class="alert alert-success mt-2">Your egg has hatched!</div>
                 {% else %}

@@ -3,6 +3,7 @@ from django.conf import settings
 
 
 class Egg(models.Model):
+    name = models.CharField(max_length=100, blank=True)
     species_name = models.CharField(max_length=100)
     element_type = models.CharField(max_length=50)   # e.g. Fire, Water, Earth
     rarity = models.CharField(max_length=50)         # e.g. Common, Rare, Legendary
