@@ -6,11 +6,85 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.utils.crypto import get_random_string
 from django.contrib import messages  # for toast notifications
 from .models import Egg, Dinosaur, RaiseAction, Trait
+from django.contrib.auth import get_user_model
 
 # Dashboard page for logged-in users
 @login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    # Check if user has any eggs
+    has_egg = Egg.objects.filter(owner=request.user).exists()
+    return render(request, 'dashboard.html', {'has_egg': has_egg})
+
+# Claim egg page for new users
+from django.views.decorators.csrf import csrf_protect
+@login_required
+@csrf_protect
+def claim_egg(request):
+    if request.method == 'POST':
+        color = request.POST.get('egg_color')
+        # Map color to species/element/rarity
+        egg_data = {
+            'green': {'species_name': 'Green Egg', 'element_type': 'Earth', 'rarity': 'Common'},
+            'orange': {'species_name': 'Orange Egg', 'element_type': 'Fire', 'rarity': 'Common'},
+            'blue': {'species_name': 'Blue Egg', 'element_type': 'Water', 'rarity': 'Common'},
+        }
+        if color in egg_data:
+            Egg.objects.create(
+                species_name=egg_data[color]['species_name'],
+                element_type=egg_data[color]['element_type'],
+                rarity=egg_data[color]['rarity'],
+                owner=request.user
+            )
+            messages.success(request, f"You claimed a {egg_data[color]['species_name']}!")
+            return redirect('active_nests')
+        else:
+            messages.error(request, 'Invalid egg selection.')
+    return render(request, 'claim_egg.html')
+
+# Active nests page stub
+@login_required
+def active_nests(request):
+    eggs = Egg.objects.filter(owner=request.user, is_hatched=False)
+
+    return render(request, 'active_nests.html', {'eggs': eggs})
+
+# Egg detail page with wilderness search
+import random
+@login_required
+def egg_detail(request, egg_id):
+    egg = get_object_or_404(Egg, id=egg_id, owner=request.user)
+    message = None
+    if not egg.is_hatched:
+        if egg.twigs >= 5 and egg.leaves >= 5:
+            egg.is_hatched = True
+            egg.save()
+            message = 'Congratulations! Your egg has hatched!'
+        elif request.method == 'POST':
+            if 'search_wilderness' in request.POST:
+                found = random.choice(['twig', 'leaf', None, None])  # 50% chance
+                if found == 'twig':
+                    egg.twigs += 1
+                    egg.save()
+                    message = 'You found a twig!'
+                elif found == 'leaf':
+                    egg.leaves += 1
+                    egg.save()
+                    message = 'You found a leaf!'
+                else:
+                    message = 'You searched but found nothing this time.'
+            elif 'turn_egg' in request.POST:
+                if random.random() < 0.3:
+                    message = 'You turned the egg. It feels warmer!'
+                else:
+                    message = 'You turned the egg. Nothing happened.'
+            elif 'sing_egg' in request.POST:
+                if random.random() < 0.3:
+                    message = 'You sang to the egg. It glows softly!'
+                else:
+                    message = 'You sang to the egg. No change.'
+    else:
+        message = 'Your egg has already hatched!'
+    return render(request, 'egg_detail.html', {'egg': egg, 'message': message})
 # Landing page for unauthenticated users
 def landing(request):
     if request.user.is_authenticated:

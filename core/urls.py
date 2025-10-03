@@ -10,4 +10,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('claim-egg/', views.claim_egg, name='claim_egg'),
+    path('active-nests/', views.active_nests, name='active_nests'),
+    path('egg/<int:egg_id>/', views.egg_detail, name='egg_detail'),
 ]

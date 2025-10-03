@@ -14,6 +14,10 @@ class Egg(models.Model):
     is_hatched = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Nest materials for hatching
+    twigs = models.PositiveIntegerField(default=0)
+    leaves = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         return f"🥚 {self.species_name} Egg ({self.rarity})"
 

@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ egg.species_name }} Details</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">{{ egg.species_name }} Care</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-4 text-center">
+                <img src="{% static 'images/eggs/' %}{{ egg.species_name|lower }}.png" alt="{{ egg.species_name }}" class="img-fluid mb-2" style="max-height:150px;">
+                <p>Element: {{ egg.element_type }}</p>
+                <p>Rarity: {{ egg.rarity }}</p>
+                <p>Status: {% if egg.is_hatched %}Hatched{% else %}Not Hatched{% endif %}</p>
+                <p>Twigs: {{ egg.twigs }} / 5</p>
+                <p>Leaves: {{ egg.leaves }} / 5</p>
+                {% if egg.is_hatched %}
+                    <div class="alert alert-success mt-2">Your egg has hatched!</div>
+                {% else %}
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        <button type="submit" name="search_wilderness" class="btn btn-success">Search Wilderness</button>
+                        <button type="submit" name="turn_egg" class="btn btn-secondary ms-2">Turn Egg</button>
+                        <button type="submit" name="sing_egg" class="btn btn-info ms-2">Sing to Egg</button>
+                    </form>
+                {% endif %}
+                {% if message %}
+                <div class="alert alert-info mt-2">{{ message }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -27,5 +27,13 @@
       </nav>
     </div>
   </div>
+  {% if not has_egg %}
+  <div class="row justify-content-center mt-4">
+    <div class="col-md-6 text-center">
+      <div class="alert alert-warning">You don't have any eggs yet!</div>
+      <a href="{% url 'claim_egg' %}" class="btn btn-success btn-lg">Claim Your First Egg</a>
+    </div>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}
