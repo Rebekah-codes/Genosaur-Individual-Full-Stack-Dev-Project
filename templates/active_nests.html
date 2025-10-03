@@ -1,4 +1,5 @@
 {% load static %}
+{% load egg_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,7 @@
                 {% for egg in eggs %}
                 <div class="col-md-3 text-center">
                     <a href="{% url 'egg_detail' egg.id %}">
-                        <img src="{% static 'images/eggs/' %}{{ egg.species_name|lower|replace:' ','_' }}_egg.png" alt="{{ egg.species_name }}" class="img-fluid mb-2" style="max-height:150px;">
+                        <img src="{% static 'images/eggs/' %}{{ egg.species_name|underscore }}_egg.png" alt="{{ egg.species_name }}" class="img-fluid mb-2" style="max-height:150px;">
                     </a>
                     <p><a href="{% url 'egg_detail' egg.id %}">{{ egg.species_name }}</a></p>
                     <p>Element: {{ egg.element_type }}</p>
