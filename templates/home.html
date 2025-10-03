@@ -10,7 +10,7 @@
 	<div class="row">
 		{% for egg in eggs %}
 			<div class="col-md-4 mb-4">
-				<div class="card shadow-sm h-100 text-center">
+				<div class="card shadow-sm h-100 text-center card-brown">
 					{% if egg.is_hatched and egg.dinosaur %}
 						<!-- Cracked egg sprite with dino info -->
 						<img src="{% static 'images/egg_cracked.png' %}" 

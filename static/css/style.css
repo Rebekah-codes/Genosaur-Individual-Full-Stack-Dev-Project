@@ -19,3 +19,8 @@ body {
 .navbar-custom {
   background-color: #A6895B !important;
 }
+
+.card-brown {
+  background-color: #A6895B !important;
+  color: #fff;
+}
