@@ -20,14 +20,29 @@
         <ul class="navbar-nav ms-auto">
           {% if user.is_authenticated %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+              <a class="nav-link" href="{% url 'dashboard' %}" style="color:#fff; font-weight:bold;">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" style="color:#fff;">Your Nest</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" style="color:#fff;">Your Dinosaurs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" style="color:#fff;">Trade Center</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" style="color:#fff;">Wilderness</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}" style="color:#fff;">Logout</a>
             </li>
           {% else %}
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'login' %}">Login</a>
+              <a class="nav-link" href="{% url 'login' %}" style="color:#fff;">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'register' %}">Register</a>
+              <a class="nav-link" href="{% url 'register' %}" style="color:#fff;">Register</a>
             </li>
           {% endif %}
         </ul>
