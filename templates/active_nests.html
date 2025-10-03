@@ -13,15 +13,19 @@
         {% if eggs %}
             <div class="row justify-content-center">
                 {% for egg in eggs %}
-                <div class="col-md-3 text-center">
-                    <a href="{% url 'egg_detail' egg.id %}">
-                        <img src="{% static 'images/eggs/' %}{{ egg.species_name|underscore }}.png" alt="{{ egg.species_name }}" class="img-fluid mb-2" style="max-height:150px;">
-                    </a>
-                    <p><a href="{% url 'egg_detail' egg.id %}">{{ egg.species_name }}</a></p>
-                    <p>Element: {{ egg.element_type }}</p>
-                    <p>Rarity: {{ egg.rarity }}</p>
-                    <p>Status: Not Hatched</p>
-                </div>
+                                <div class="col-md-3 mb-4">
+                                    <div class="card shadow-sm h-100" style="background-color:#F5E6C8; color:#4B3A1A; border:1px solid #e2cfa3;">
+                                        <div class="card-body text-center">
+                                            <a href="{% url 'egg_detail' egg.id %}">
+                                                <img src="{% static 'images/eggs/' %}{{ egg.species_name|underscore }}.png" alt="{{ egg.species_name }}" class="img-fluid mb-2" style="max-height:150px;">
+                                            </a>
+                                            <h5 class="card-title mb-2"><a href="{% url 'egg_detail' egg.id %}" style="color:#4B3A1A; text-decoration:none; font-weight:bold;">{{ egg.species_name }}</a></h5>
+                                            <p class="mb-1">Element: {{ egg.element_type }}</p>
+                                            <p class="mb-1">Rarity: {{ egg.rarity }}</p>
+                                            <p class="mb-0">Status: Not Hatched</p>
+                                        </div>
+                                    </div>
+                                </div>
                 {% endfor %}
             </div>
         {% else %}
