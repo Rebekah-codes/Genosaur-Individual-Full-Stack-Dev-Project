@@ -21,7 +21,7 @@ from django.contrib.auth import logout as auth_logout
 def logout_view(request):
     auth_logout(request)
     messages.success(request, 'You have been logged out successfully.')
-    return redirect('home')
+    return redirect('landing')
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
 # Login view
