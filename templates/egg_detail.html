@@ -23,7 +23,11 @@
                 {% else %}
                     <form method="post" action="">
                         {% csrf_token %}
-                        <button type="submit" name="search_wilderness" class="btn btn-success">Search Wilderness</button>
+                        {% if egg.twigs == 5 and egg.leaves == 5 %}
+                            <button type="button" class="btn btn-success" onclick="alert('You can\'t search for any more twigs or leaves!')" disabled>Search Wilderness</button>
+                        {% else %}
+                            <button type="submit" name="search_wilderness" class="btn btn-success">Search Wilderness</button>
+                        {% endif %}
                         <button type="submit" name="turn_egg" class="btn btn-secondary ms-2">Turn Egg</button>
                         <button type="submit" name="sing_egg" class="btn btn-info ms-2">Sing to Egg</button>
                     </form>
