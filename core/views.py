@@ -126,7 +126,7 @@ def register(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registration successful!')
-            return redirect('home')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
