@@ -1,3 +1,14 @@
+# Dashboard page for logged-in users
+@login_required
+def dashboard(request):
+    return render(request, 'dashboard.html')
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+# Landing page for unauthenticated users
+def landing(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    return render(request, 'landing.html')
 from django.contrib.auth import logout as auth_logout
 # Logout view
 def logout_view(request):
@@ -14,7 +25,7 @@ def login_view(request):
             user = form.get_user()
             auth_login(request, user)
             messages.success(request, 'Login successful!')
-            return redirect('home')
+            return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password.')
     else:
