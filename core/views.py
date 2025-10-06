@@ -181,6 +181,7 @@ def hatch_egg(request, egg_id):
             egg=egg,
             owner=egg.owner
         )
+        return redirect('hatching_page', egg_id=egg.id)
     return redirect('home')
 
 # Dino profile view
