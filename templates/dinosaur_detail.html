@@ -10,11 +10,19 @@
       <strong>Mood:</strong> {{ dino.mood }}
     </p>
 
-    <!-- Dino sprite -->
-    <img src="{% static dino.get_sprite %}"
-         alt="{{ dino.stage }} sprite"
-         class="img-fluid mb-3 evolve-sprite"
-         style="max-width: 200px;">
+    <!-- Dino sprite with fallback -->
+    {% if dino.get_sprite %}
+   <img src="{% static dino.get_sprite %}"
+     alt="{{ dino.stage }} sprite"
+     class="img-fluid mb-3 evolve-sprite"
+     style="max-width: 200px;"
+     onerror="this.onerror=null;this.src='{% static 'images/eggs/green_egg.png' %}';">
+    {% else %}
+   <img src="{% static 'images/eggs/green_egg.png' %}"
+     alt="Fallback sprite"
+     class="img-fluid mb-3 evolve-sprite"
+     style="max-width: 200px;">
+    {% endif %}
 
     <!-- Level Progress -->
     <p>Level {{ dino.level }}/100</p>
