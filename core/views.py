@@ -10,8 +10,9 @@ from .models import Egg, Dinosaur, RaiseAction, Trait
 @login_required
 def your_dinosaurs(request):
     dinosaurs = Dinosaur.objects.filter(owner=request.user)
-    # Assign correct image path for each dino
+    print(f"DEBUG: Found {dinosaurs.count()} dinosaurs for user {request.user}")
     for dino in dinosaurs:
+        print(f"DEBUG: Dino {dino.name}, stage={dino.stage}, species={dino.species_name}")
         color = dino.species_name.split()[0].lower()
         if dino.stage == 'juvenile':
             image_map = {
