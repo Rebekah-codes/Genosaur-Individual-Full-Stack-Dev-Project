@@ -71,6 +71,16 @@
       </div>
     </form>
 
+    {% if dino.stage == 'juvenile' %}
+      <h4 class="mt-4">Wilderness Search</h4>
+      <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
+        {% csrf_token %}
+        <input type="hidden" name="action_type" value="wilderness_search">
+        <button type="submit" class="btn btn-success">Take {{ dino.name }} to search for food in the wilderness</button>
+      </form>
+      <p class="text-muted">Juvenile dinosaurs have a 60% chance to find food in the wilderness. Try your luck!</p>
+    {% endif %}
+
     <!-- Traits -->
     <h4 class="mt-4">Traits</h4>
     {% if dino.traits.all %}

@@ -301,6 +301,16 @@ def perform_action(request, dino_id):
             dino.level_up()  # training increases level
             if dino.level == 100:
                 messages.success(request, f"{dino.name} reached the max level 100!")
+        elif action_type == "wilderness_search" and dino.stage == "juvenile":
+            import random
+            if random.random() < 0.6:
+                outcome = f"{dino.name} found some delicious food in the wilderness!"
+                dino.mood = "happy"
+                messages.success(request, outcome)
+            else:
+                outcome = f"{dino.name} searched the wilderness but found nothing this time."
+                dino.mood = "hungry"
+                messages.info(request, outcome)
         dino.save()
         RaiseAction.objects.create(
             dinosaur=dino,
