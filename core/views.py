@@ -1,3 +1,11 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.utils.crypto import get_random_string
+from django.contrib import messages  # for toast notifications
+from .models import Egg, Dinosaur, RaiseAction, Trait
+
 # Your dinosaurs inventory page
 @login_required
 def your_dinosaurs(request):
@@ -29,15 +37,6 @@ def your_dinosaurs(request):
         else:
             dino.image_path = "images/hatchling.png"
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
-# Imports
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout as auth_logout, login as auth_login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.utils.crypto import get_random_string
-from django.contrib import messages  # for toast notifications
-from .models import Egg, Dinosaur, RaiseAction, Trait
 from django.contrib.auth import get_user_model
 
 # Dashboard page for logged-in users
