@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Your Dinosaurs</h2>
+  {% if dinosaurs %}
+    <div class="row justify-content-center">
+      {% for dino in dinosaurs %}
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm p-3 text-center" style="background-color:#F5E6C8;">
+            <img src="{% static dino.image_path %}" alt="{{ dino.name }}" style="max-width:200px;">
+            <h4 class="mt-2">{{ dino.name }}</h4>
+            <p>Species: {{ dino.species_name }}</p>
+            <p>Stage: {{ dino.stage|title }}</p>
+            <p>Mood: {{ dino.mood }}</p>
+            <a href="{% url 'dinosaur_detail' dino.id %}" class="btn btn-primary mt-2">View Details</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center">You don't have any dinosaurs yet. Hatch an egg to get started!</p>
+  {% endif %}
+</div>
+{% endblock %}

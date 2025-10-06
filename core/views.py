@@ -1,3 +1,34 @@
+# Your dinosaurs inventory page
+@login_required
+def your_dinosaurs(request):
+    dinosaurs = Dinosaur.objects.filter(owner=request.user)
+    # Assign correct image path for each dino
+    for dino in dinosaurs:
+        color = dino.species_name.split()[0].lower()
+        if dino.stage == 'juvenile':
+            image_map = {
+                'green': 'green_rex_juvie.png',
+                'blue': 'blue_spino_juvie.png',
+                'orange': 'orange_trike_juvie.png',
+            }
+            dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
+        elif dino.stage == 'hatchling':
+            image_map = {
+                'green': 'green_egg.png',
+                'blue': 'blue_egg.png',
+                'orange': 'orange_egg.png',
+            }
+            dino.image_path = f"images/eggs/{image_map.get(color, 'green_egg.png')}"
+        elif dino.stage == 'adult':
+            image_map = {
+                'green': 'green_rex_adult.png',
+                'blue': 'blue_spino_adult.png',
+                'orange': 'orange_trike_adult.png',
+            }
+            dino.image_path = f"images/adult dinos/{image_map.get(color, 'green_rex_adult.png')}"
+        else:
+            dino.image_path = "images/hatchling.png"
+    return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
 # Imports
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
