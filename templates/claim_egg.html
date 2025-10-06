@@ -1,40 +1,33 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Claim Your First Egg</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Choose Your First Egg</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-3 text-center">
-                <img src="{% static 'images/eggs/green_egg.png' %}" alt="Green Egg" class="img-fluid mb-2" style="max-height:150px;">
-                <form method="post" action="{% url 'claim_egg' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="egg_color" value="green">
-                    <button type="submit" class="btn btn-success">Choose Green Egg</button>
-                </form>
-            </div>
-            <div class="col-md-3 text-center">
-                <img src="{% static 'images/eggs/orange_egg.png' %}" alt="Orange Egg" class="img-fluid mb-2" style="max-height:150px;">
-                <form method="post" action="{% url 'claim_egg' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="egg_color" value="orange">
-                    <button type="submit" class="btn btn-warning">Choose Orange Egg</button>
-                </form>
-            </div>
-            <div class="col-md-3 text-center">
-                <img src="{% static 'images/eggs/blue_egg.png' %}" alt="Blue Egg" class="img-fluid mb-2" style="max-height:150px;">
-                <form method="post" action="{% url 'claim_egg' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="egg_color" value="blue">
-                    <button type="submit" class="btn btn-primary">Choose Blue Egg</button>
-                </form>
-            </div>
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Choose Your First Egg</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-3 text-center">
+            <img src="{% static 'images/eggs/green_egg.png' %}" alt="Green Egg" class="img-fluid mb-2" style="max-height:150px;">
+            <form method="post" action="{% url 'claim_egg' %}">
+                {% csrf_token %}
+                <input type="hidden" name="egg_color" value="green">
+                <button type="submit" class="btn btn-success">Choose Green Egg</button>
+            </form>
+        </div>
+        <div class="col-md-3 text-center">
+            <img src="{% static 'images/eggs/orange_egg.png' %}" alt="Orange Egg" class="img-fluid mb-2" style="max-height:150px;">
+            <form method="post" action="{% url 'claim_egg' %}">
+                {% csrf_token %}
+                <input type="hidden" name="egg_color" value="orange">
+                <button type="submit" class="btn btn-warning">Choose Orange Egg</button>
+            </form>
+        </div>
+        <div class="col-md-3 text-center">
+            <img src="{% static 'images/eggs/blue_egg.png' %}" alt="Blue Egg" class="img-fluid mb-2" style="max-height:150px;">
+            <form method="post" action="{% url 'claim_egg' %}">
+                {% csrf_token %}
+                <input type="hidden" name="egg_color" value="blue">
+                <button type="submit" class="btn btn-primary">Choose Blue Egg</button>
+            </form>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

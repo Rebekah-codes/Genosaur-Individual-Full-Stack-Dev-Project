@@ -1,43 +1,37 @@
+{% extends 'base.html' %}
 {% load static %}
 {% load egg_filters %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ egg.species_name }} Details</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-</head>
-<body>
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">{{ egg.species_name }} Care</h2>
-        <div class="row justify-content-center">
-            <div class="col-md-4 text-center">
-                <img src="{% static 'images/eggs/' %}{{ egg.species_name|underscore }}.png" alt="{{ egg.species_name }}" class="img-fluid mb-2" style="max-height:150px;">
-                <p>Element: {{ egg.element_type }}</p>
-                <p>Rarity: {{ egg.rarity }}</p>
-                <p>Status: {% if egg.is_hatched %}Hatched{% else %}Not Hatched{% endif %}</p>
-                <p>Twigs: {{ egg.twigs }} / 5</p>
-                <p>Leaves: {{ egg.leaves }} / 5</p>
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{{ egg.species_name }} Care</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-4 text-center">
+            <img src="{% static 'images/eggs/' %}{{ egg.species_name|underscore }}.png" alt="{{ egg.species_name }}" class="img-fluid mb-2" style="max-height:150px;">
+            <p>Element: {{ egg.element_type }}</p>
+            <p>Rarity: {{ egg.rarity }}</p>
+            <p>Status: {% if egg.is_hatched %}Hatched{% else %}Not Hatched{% endif %}</p>
+            <p>Twigs: {{ egg.twigs }} / 5</p>
+            <p>Leaves: {{ egg.leaves }} / 5</p>
 
-                <!-- Egg naming form -->
-                <form method="post" action="" class="mb-3">
+            <!-- Egg naming form -->
+            <form method="post" action="" class="mb-3">
+                {% csrf_token %}
+                <div class="mb-2">
+                    <label for="egg_name" class="form-label">Egg Name:</label>
+                    <input type="text" id="egg_name" name="egg_name" class="form-control" value="{{ egg.name }}" maxlength="100" placeholder="Give your egg a name...">
+                </div>
+                <button type="submit" name="set_egg_name" class="btn btn-warning">Set Name</button>
+            </form>
+
+            {% if egg.is_hatched %}
+                <div class="alert alert-success mt-2">Your egg has hatched!</div>
+            {% else %}
+                <form method="post" action="">
                     {% csrf_token %}
-                    <div class="mb-2">
-                        <label for="egg_name" class="form-label">Egg Name:</label>
-                        <input type="text" id="egg_name" name="egg_name" class="form-control" value="{{ egg.name }}" maxlength="100" placeholder="Give your egg a name...">
-                    </div>
-                    <button type="submit" name="set_egg_name" class="btn btn-warning">Set Name</button>
-                </form>
-
-                {% if egg.is_hatched %}
-                    <div class="alert alert-success mt-2">Your egg has hatched!</div>
-                {% else %}
-                    <form method="post" action="">
-                        {% csrf_token %}
-                        {% if egg.twigs == 5 and egg.leaves == 5 %}
-                            <button type="button" class="btn btn-success" onclick="alert('You can\'t search for any more twigs or leaves!')" disabled>Search Wilderness</button>
-                        {% else %}
-                            <button type="submit" name="search_wilderness" class="btn btn-success">Search Wilderness</button>
+                    {% if egg.twigs == 5 and egg.leaves == 5 %}
+                        <button type="button" class="btn btn-success" onclick="alert('You can\'t search for any more twigs or leaves!')" disabled>Search Wilderness</button>
+                    {% else %}
+                        <button type="submit" name="search_wilderness" class="btn btn-success">Search Wilderness</button>
                         {% endif %}
                         <button type="submit" name="turn_egg" class="btn btn-secondary ms-2">Turn Egg</button>
                         <button type="submit" name="sing_egg" class="btn btn-info ms-2">Sing to Egg</button>
@@ -49,5 +43,5 @@
             </div>
         </div>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}
