@@ -11,14 +11,22 @@ from django.contrib.auth import get_user_model
 # Dashboard page for logged-in users
 @login_required
 def dashboard(request):
-    # Check if user has any eggs
-    has_egg = Egg.objects.filter(owner=request.user).exists()
-    # Get user's juvenile dinosaurs
-    juvenile_dinos = Dinosaur.objects.filter(owner=request.user, stage='juvenile')
-    for dino in juvenile_dinos:
-        color = dino.species_name.split()[0].lower()
-        dino.image_path = f"images/juvenile dinos/{color} juvenile.png"
-    return render(request, 'dashboard.html', {'has_egg': has_egg, 'juvenile_dinos': juvenile_dinos})
+    import logging
+    try:
+        has_egg = Egg.objects.filter(owner=request.user).exists()
+        juvenile_dinos = Dinosaur.objects.filter(owner=request.user, stage='juvenile')
+        for dino in juvenile_dinos:
+            color = dino.species_name.split()[0].lower()
+            image_map = {
+                'green': 'green_rex_juvie.png',
+                'blue': 'blue_spino_juvie.png',
+                'orange': 'orange_trike_juvie.png',
+            }
+            dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
+        return render(request, 'dashboard.html', {'has_egg': has_egg, 'juvenile_dinos': juvenile_dinos})
+    except Exception as e:
+        logging.error(f"Dashboard error: {e}")
+        return render(request, 'dashboard.html', {'has_egg': False, 'juvenile_dinos': [], 'error': str(e)})
 
 # Claim egg page for new users
 from django.views.decorators.csrf import csrf_protect
