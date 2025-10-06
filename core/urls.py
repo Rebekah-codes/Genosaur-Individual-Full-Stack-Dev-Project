@@ -13,4 +13,5 @@ urlpatterns = [
     path('claim-egg/', views.claim_egg, name='claim_egg'),
     path('active-nests/', views.active_nests, name='active_nests'),
     path('egg/<int:egg_id>/', views.egg_detail, name='egg_detail'),
+    path('hatching/<int:egg_id>/', views.hatching_page, name='hatching_page'),
 ]

@@ -13,7 +13,12 @@ from django.contrib.auth import get_user_model
 def dashboard(request):
     # Check if user has any eggs
     has_egg = Egg.objects.filter(owner=request.user).exists()
-    return render(request, 'dashboard.html', {'has_egg': has_egg})
+    # Get user's juvenile dinosaurs
+    juvenile_dinos = Dinosaur.objects.filter(owner=request.user, stage='juvenile')
+    for dino in juvenile_dinos:
+        color = dino.species_name.split()[0].lower()
+        dino.image_path = f"images/juvenile dinos/{color} juvenile.png"
+    return render(request, 'dashboard.html', {'has_egg': has_egg, 'juvenile_dinos': juvenile_dinos})
 
 # Claim egg page for new users
 from django.views.decorators.csrf import csrf_protect
@@ -58,7 +63,7 @@ def egg_detail(request, egg_id):
         if egg.twigs >= 5 and egg.leaves >= 5:
             egg.is_hatched = True
             egg.save()
-            message = 'Congratulations! Your egg has hatched!'
+            return redirect('hatching_page', egg_id=egg.id)
         elif request.method == 'POST':
             if 'set_egg_name' in request.POST:
                 new_name = request.POST.get('egg_name', '').strip()
@@ -178,6 +183,17 @@ def dinosaur_detail(request, dino_id):
     feed_actions = dino.actions.filter(action_type="feed").count()
     feeds_needed = 3
     actions_needed = 5
+
+# Hatching page view
+from django.conf import settings
+@login_required
+def hatching_page(request, egg_id):
+    egg = get_object_or_404(Egg, id=egg_id, owner=request.user)
+    # Determine image path based on egg color/species
+    color = egg.species_name.split()[0].lower()  # e.g., 'green', 'blue', 'orange', 'purple'
+    image_path = f"images/hatching egg/{color} egg.png"
+    message = "Congratulations! Your egg is hatching!"
+    return render(request, "hatching_page.html", {"egg": egg, "image_path": image_path, "message": message})
     feed_progress = min(feed_actions, feeds_needed)
     action_progress = min(total_actions, actions_needed)
     # Calculate percent for progress bars
