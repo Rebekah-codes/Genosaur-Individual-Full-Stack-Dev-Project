@@ -6,6 +6,20 @@ from django.utils.crypto import get_random_string
 from django.contrib import messages  # for toast notifications
 from .models import Egg, Dinosaur, RaiseAction, Trait
 
+def create_dinosaur_from_egg(egg):
+    # Only create if not already linked
+    if not hasattr(egg, 'dinosaur') or egg.dinosaur is None:
+        dino_name = f"{egg.species_name}-{get_random_string(4)}"
+        return Dinosaur.objects.create(
+            name=dino_name,
+            species_name=egg.species_name,
+            stage="hatchling",
+            mood="happy",
+            egg=egg,
+            owner=egg.owner
+        )
+    return egg.dinosaur
+
 # Your dinosaurs inventory page
 @login_required
 def your_dinosaurs(request):
@@ -103,6 +117,7 @@ def egg_detail(request, egg_id):
         if egg.twigs >= 5 and egg.leaves >= 5:
             egg.is_hatched = True
             egg.save()
+            create_dinosaur_from_egg(egg)
             return redirect('hatching_page', egg_id=egg.id)
         elif request.method == 'POST':
             if 'set_egg_name' in request.POST:
@@ -136,6 +151,8 @@ def egg_detail(request, egg_id):
                 else:
                     message = 'You sang to the egg. No change.'
     else:
+        # Ensure dinosaur exists for already hatched eggs
+        create_dinosaur_from_egg(egg)
         message = 'Your egg has already hatched!'
     return render(request, 'egg_detail.html', {'egg': egg, 'message': message})
 # Landing page for unauthenticated users
@@ -203,16 +220,7 @@ def hatch_egg(request, egg_id):
     if not egg.is_hatched:
         egg.is_hatched = True
         egg.save()
-        # Auto-create a Dinosaur from this egg
-        dino_name = f"{egg.species_name}-{get_random_string(4)}"
-        Dinosaur.objects.create(
-            name=dino_name,
-            species_name=egg.species_name,
-            stage="hatchling",
-            mood="happy",
-            egg=egg,
-            owner=egg.owner
-        )
+        create_dinosaur_from_egg(egg)
         return redirect('hatching_page', egg_id=egg.id)
     return redirect('home')
 
