@@ -38,7 +38,6 @@ class Trait(models.Model):
 
 class Dinosaur(models.Model):
     STAGE_CHOICES = [
-        ('hatchling', 'Hatchling'),
         ('juvenile', 'Juvenile'),
         ('adult', 'Adult'),
     ]
@@ -52,7 +51,7 @@ class Dinosaur(models.Model):
 
     name = models.CharField(max_length=100)
     species_name = models.CharField(max_length=100)
-    stage = models.CharField(max_length=20, choices=STAGE_CHOICES, default='hatchling')
+    stage = models.CharField(max_length=20, choices=STAGE_CHOICES, default='juvenile')
     mood = models.CharField(max_length=20, choices=MOOD_CHOICES, default='happy')
     traits = models.ManyToManyField(Trait, blank=True, related_name='dinosaurs')
     egg = models.OneToOneField(
