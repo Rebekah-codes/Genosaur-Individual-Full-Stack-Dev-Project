@@ -37,11 +37,11 @@ def your_dinosaurs(request):
             dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
         elif dino.stage == 'hatchling':
             image_map = {
-                'green': 'green_egg.png',
-                'blue': 'blue_egg.png',
-                'orange': 'orange_egg.png',
+                'green': 'green_rex_juvie.png',
+                'blue': 'blue_spino_juvie.png',
+                'orange': 'orange_trike_juvie.png',
             }
-            dino.image_path = f"images/eggs/{image_map.get(color, 'green_egg.png')}"
+            dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
         elif dino.stage == 'adult':
             image_map = {
                 'green': 'green_rex_adult.png',
