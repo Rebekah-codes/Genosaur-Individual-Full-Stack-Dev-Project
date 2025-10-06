@@ -3,8 +3,8 @@
 {% block content %}
 <div class="card shadow-sm mx-auto" style="max-width: 600px;">
   <div class="card-body text-center">
-    <h2 class="card-title">🦕 {{ dino.name }}</h2>
-    <p class="lead">{{ dino.species_name }}</p>
+  <h2 class="card-title">🦕 {{ dino.name|default:dino.species_name }}</h2>
+  <p class="lead">{{ dino.species_name }}</p>
     <p>
       <strong>Stage:</strong> {{ dino.stage }}<br>
       <strong>Mood:</strong> {{ dino.mood }}
@@ -80,6 +80,12 @@
       </form>
       <p class="text-muted">Juvenile dinosaurs have a 60% chance to find food in the wilderness. Try your luck!</p>
     {% endif %}
+
+
+    <!-- Twigs and Leaves capped at 5 -->
+    <h4 class="mt-4">Resources</h4>
+    <p>Twigs: {{ dino.twigs|add:'0'|int > 5 and 5 or dino.twigs }} / 5</p>
+    <p>Leaves: {{ dino.leaves|add:'0'|int > 5 and 5 or dino.leaves }} / 5</p>
 
     <!-- Traits -->
     <h4 class="mt-4">Traits</h4>
