@@ -8,11 +8,7 @@
       {% for dino in dinosaurs %}
         <div class="col-md-4 mb-4">
           <div class="card shadow-sm p-3 text-center" style="background-color:#F5E6C8; min-height:420px; display:flex; flex-direction:column; justify-content:center;">
-            {% if 'green_rex_juvie.png' in dino.image_path %}
-              <img src="{% static dino.image_path %}" alt="{{ dino.name }}" style="width:160px; height:160px; object-fit:contain;" class="mx-auto d-block">
-            {% else %}
-              <img src="{% static dino.image_path %}" alt="{{ dino.name }}" style="width:180px; height:180px; object-fit:contain;" class="mx-auto d-block">
-            {% endif %}
+            <img src="{% static dino.image_path %}" alt="{{ dino.name }}" style="width:180px; height:180px; object-fit:contain;" class="mx-auto d-block">
             <h4 class="mt-2">{{ dino.name }}</h4>
             <p>Species: {{ dino.species_name }}</p>
               <p>Stage: {{ dino.stage|title }}</p>
