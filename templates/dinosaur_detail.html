@@ -26,7 +26,7 @@
   >
     {% else %}
    <img src="{% static 'images/eggs/green_egg.png' %}"
-     alt="Fallback sprite"
+  {% load static %}
      class="img-fluid mb-3 evolve-sprite"
      style="max-width: 200px;">
     {% endif %}
