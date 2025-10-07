@@ -28,28 +28,31 @@ def your_dinosaurs(request):
     for dino in dinosaurs:
         print(f"DEBUG: Dino {dino.name}, stage={dino.stage}, species={dino.species_name}")
         species = dino.species_name.strip().lower().replace('_', ' ').replace('-', ' ')
-        print(f"DEBUG: {dino.name} species_name='{dino.species_name}' mapped_species='{species}' stage='{dino.stage}'")
+        # Also check for capitalized color at start
+        color = species.split()[0] if species else ''
+        color_lower = color.lower()
+        print(f"DEBUG: {dino.name} species_name='{dino.species_name}' mapped_species='{species}' color='{color_lower}' stage='{dino.stage}'")
         if dino.stage == 'juvenile':
-            if 'green' in species:
+            if color_lower == 'green':
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-            elif 'orange' in species:
+            elif color_lower == 'orange':
                 dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
-            elif 'blue' in species:
+            elif color_lower == 'blue':
                 dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
             else:
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
         elif dino.stage == 'adult':
-            if 'green' in species:
+            if color_lower == 'green':
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
-            elif 'orange' in species:
+            elif color_lower == 'orange':
                 dino.image_path = "images/adult dinos/orange_trike_adult.png"
-            elif 'blue' in species:
+            elif color_lower == 'blue':
                 dino.image_path = "images/adult dinos/blue_spino_adult.png"
             else:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
         else:
             dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-        print(f"DEBUG: {dino.name} image_path='{dino.image_path}'")
+        print(f"DEBUG: {dino.name} FINAL image_path='{dino.image_path}'")
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
 from django.contrib.auth import get_user_model
 
