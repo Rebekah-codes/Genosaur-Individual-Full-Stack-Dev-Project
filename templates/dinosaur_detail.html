@@ -10,59 +10,63 @@
 {% endif %}
 <div class="card shadow-sm mx-auto" style="max-width: 600px;">
   <div class="card-body text-center">
-  <h2 class="card-title">🦕 {{ dino.name|default:dino.species_name }}</h2>
-  <p class="lead">{{ dino.species_name }}</p>
+  {% if dino %}
+    <h2 class="card-title">🦕 {{ dino.name|default:dino.species_name }}</h2>
+    <p class="lead">{{ dino.species_name }}</p>
     <p>
       <strong>Stage:</strong> {{ dino.stage }}<br>
       <strong>Mood:</strong> {{ dino.mood }}
     </p>
+  {% endif %}
 
     <!-- Dino sprite with fallback -->
-    {% if dino.get_sprite %}
-   <img src="{% static dino.get_sprite %}"
-     alt="{{ dino.stage }} sprite"
-     class="img-fluid mb-3 evolve-sprite"
-     style="max-width: 200px;"
-  >
+    {% if dino and dino.get_sprite %}
+      <img src="{% static dino.get_sprite %}"
+        alt="{{ dino.stage }} sprite"
+        class="img-fluid mb-3 evolve-sprite"
+        style="max-width: 200px;">
     {% else %}
-   <img src="{% static 'images/eggs/green_egg.png' %}"
-  {% load static %}
-     class="img-fluid mb-3 evolve-sprite"
-     style="max-width: 200px;">
+      <img src="{% static 'images/eggs/green_egg.png' %}"
+        alt="Fallback sprite"
+        class="img-fluid mb-3 evolve-sprite"
+        style="max-width: 200px;">
     {% endif %}
 
-    <!-- Level Progress -->
-    <p>Level {{ dino.level }}/100</p>
-    <div class="progress mb-4">
-   <div class="progress-bar bg-primary" role="progressbar"
-  style="width: {{ level_percent|default:'0' }}%;"
-     aria-valuenow="{{ dino.level }}" aria-valuemin="0" aria-valuemax="100">
-        {{ dino.level }}/100
-      </div>
-    </div>
 
-    <!-- Progress Bars -->
-    <h4 class="mt-4">Progression</h4>
-    <p>Feeds until evolution ({{ feed_progress }}/{{ feeds_needed }})</p>
-    <div class="progress mb-3">
-      <div class="progress-bar 
-        {% if feed_complete %}bg-success pulse{% elif feed_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
-      role="progressbar"
-  style="width: {{ feed_percent|default:'0' }}%;"
-      aria-valuenow="{{ feed_progress }}" aria-valuemin="0" aria-valuemax="{{ feeds_needed }}">
-        {{ feed_progress }}/{{ feeds_needed }}
+    {% if dino %}
+      <!-- Level Progress -->
+      <p>Level {{ dino.level }}/100</p>
+      <div class="progress mb-4">
+        <div class="progress-bar bg-primary" role="progressbar"
+          style="width: {{ level_percent|default:'0' }}%;"
+          aria-valuenow="{{ dino.level }}" aria-valuemin="0" aria-valuemax="100">
+          {{ dino.level }}/100
+        </div>
       </div>
-    </div>
-    <p>Actions until trait unlock ({{ action_progress }}/{{ actions_needed }})</p>
-    <div class="progress mb-4">
-      <div class="progress-bar 
-        {% if action_complete %}bg-success pulse{% elif action_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
-      role="progressbar"
-  style="width: {{ action_percent|default:'0' }}%;"
-      aria-valuenow="{{ action_progress }}" aria-valuemin="0" aria-valuemax="{{ actions_needed }}">
-        {{ action_progress }}/{{ actions_needed }}
+
+      <!-- Progress Bars -->
+      <h4 class="mt-4">Progression</h4>
+      <p>Feeds until evolution ({{ feed_progress }}/{{ feeds_needed }})</p>
+      <div class="progress mb-3">
+        <div class="progress-bar 
+          {% if feed_complete %}bg-success pulse{% elif feed_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
+          role="progressbar"
+          style="width: {{ feed_percent|default:'0' }}%;"
+          aria-valuenow="{{ feed_progress }}" aria-valuemin="0" aria-valuemax="{{ feeds_needed }}">
+          {{ feed_progress }}/{{ feeds_needed }}
+        </div>
       </div>
-    </div>
+      <p>Actions until trait unlock ({{ action_progress }}/{{ actions_needed }})</p>
+      <div class="progress mb-4">
+        <div class="progress-bar 
+          {% if action_complete %}bg-success pulse{% elif action_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
+          role="progressbar"
+          style="width: {{ action_percent|default:'0' }}%;"
+          aria-valuenow="{{ action_progress }}" aria-valuemin="0" aria-valuemax="{{ actions_needed }}">
+          {{ action_progress }}/{{ actions_needed }}
+        </div>
+      </div>
+    {% endif %}
 
     {% if dino %}
     <!-- Perform Action Form -->
