@@ -27,26 +27,26 @@ def your_dinosaurs(request):
     print(f"DEBUG: Found {dinosaurs.count()} dinosaurs for user {request.user}")
     for dino in dinosaurs:
         print(f"DEBUG: Dino {dino.name}, stage={dino.stage}, species_name='{dino.species_name}'")
-        species = dino.species_name.strip().lower().replace('_', ' ').replace('-', ' ')
-        has_green = 'green' in species
-        has_orange = 'orange' in species
-        has_blue = 'blue' in species
-        print(f"DEBUG: {dino.name} mapped_species='{species}' has_green={has_green} has_orange={has_orange} has_blue={has_blue} stage='{dino.stage}'")
+        species = dino.species_name.strip().lower()
+        is_green_egg = species == 'green egg'
+        is_orange_egg = species == 'orange egg'
+        is_blue_egg = species == 'blue egg'
+        print(f"DEBUG: {dino.name} species='{species}' is_green_egg={is_green_egg} is_orange_egg={is_orange_egg} is_blue_egg={is_blue_egg} stage='{dino.stage}'")
         if dino.stage == 'juvenile':
-            if has_green:
+            if is_green_egg:
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-            elif has_orange:
+            elif is_orange_egg:
                 dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
-            elif has_blue:
+            elif is_blue_egg:
                 dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
             else:
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
         elif dino.stage == 'adult':
-            if has_green:
+            if is_green_egg:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
-            elif has_orange:
+            elif is_orange_egg:
                 dino.image_path = "images/adult dinos/orange_trike_adult.png"
-            elif has_blue:
+            elif is_blue_egg:
                 dino.image_path = "images/adult dinos/blue_spino_adult.png"
             else:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
