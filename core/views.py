@@ -13,7 +13,7 @@ def create_dinosaur_from_egg(egg):
         return Dinosaur.objects.create(
             name=dino_name,
             species_name=egg.species_name,
-            stage="hatchling",
+            stage="juvenile",
             mood="happy",
             egg=egg,
             owner=egg.owner
@@ -36,6 +36,7 @@ def your_dinosaurs(request):
             }
             dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
         elif dino.stage == 'hatchling':
+            # If any dinosaurs are still hatchling, treat as juvenile for image
             image_map = {
                 'green': 'green_rex_juvie.png',
                 'blue': 'blue_spino_juvie.png',
@@ -94,7 +95,8 @@ def claim_egg(request):
                 rarity=egg_data[color]['rarity'],
                 owner=request.user
             )
-            messages.success(request, f"You claimed a {egg_data[color]['species_name']}!")
+            article = 'an' if egg_data[color]['species_name'][0].lower() in 'aeiou' else 'a'
+            messages.success(request, f"You claimed {article} {egg_data[color]['species_name']}!")
             return redirect('active_nests')
         else:
             messages.error(request, 'Invalid egg selection.')
@@ -131,13 +133,19 @@ def egg_detail(request, egg_id):
             elif 'search_wilderness' in request.POST:
                 found = random.choice(['twig', 'leaf', None, None])  # 50% chance
                 if found == 'twig':
-                    egg.twigs += 1
-                    egg.save()
-                    message = 'You found a twig!'
+                    if egg.twigs < 5:
+                        egg.twigs += 1
+                        egg.save()
+                        message = 'You found a twig!'
+                    else:
+                        message = 'You searched but found nothing this time.'
                 elif found == 'leaf':
-                    egg.leaves += 1
-                    egg.save()
-                    message = 'You found a leaf!'
+                    if egg.leaves < 5:
+                        egg.leaves += 1
+                        egg.save()
+                        message = 'You found a leaf!'
+                    else:
+                        message = 'You searched but found nothing this time.'
                 else:
                     message = 'You searched but found nothing this time.'
             elif 'turn_egg' in request.POST:
@@ -225,6 +233,7 @@ def hatch_egg(request, egg_id):
     return redirect('home')
 
 # Dino profile view
+@login_required
 def dinosaur_detail(request, dino_id):
     dino = get_object_or_404(Dinosaur, id=dino_id)
     actions = dino.actions.order_by('-timestamp')
@@ -311,15 +320,21 @@ def perform_action(request, dino_id):
             if dino.level == 100:
                 messages.success(request, f"{dino.name} reached the max level 100!")
         elif action_type == "wilderness_search" and dino.stage == "juvenile":
-            import random
-            if random.random() < 0.6:
-                outcome = f"{dino.name} found some delicious food in the wilderness!"
-                dino.mood = "happy"
-                messages.success(request, outcome)
-            else:
-                outcome = f"{dino.name} searched the wilderness but found nothing this time."
+            # If twigs or leaves is already 5, always return 'didn't find anything'
+            if dino.twigs >= 5 or dino.leaves >= 5:
+                outcome = f"{dino.name} searched the wilderness but didn't find anything (max resources reached)."
                 dino.mood = "hungry"
                 messages.info(request, outcome)
+            else:
+                import random
+                if random.random() < 0.6:
+                    outcome = f"{dino.name} found some delicious food in the wilderness!"
+                    dino.mood = "happy"
+                    messages.success(request, outcome)
+                else:
+                    outcome = f"{dino.name} searched the wilderness but found nothing this time."
+                    dino.mood = "hungry"
+                    messages.info(request, outcome)
         dino.save()
         RaiseAction.objects.create(
             dinosaur=dino,
