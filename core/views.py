@@ -255,6 +255,11 @@ def dinosaur_detail(request, dino_id):
     import logging
     try:
         dino = get_object_or_404(Dinosaur, id=dino_id)
+        if request.method == 'POST' and 'release_dino' in request.POST:
+            dino.delete()
+            from django.contrib import messages
+            messages.success(request, "Your dinosaur has been released to the wild!")
+            return redirect('your_dinosaurs')
         actions = dino.actions.order_by('-timestamp')
         total_actions = dino.actions.count()
         feed_actions = dino.actions.filter(action_type="feed").count()

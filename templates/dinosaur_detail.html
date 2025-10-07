@@ -158,6 +158,31 @@
     {% else %}
       <p>No actions yet. Try feeding, playing, or training!</p>
     {% endif %}
+    <!-- Release Button -->
+    {% if dino %}
+      <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#releaseModal">Release</button>
+      <!-- Release Modal -->
+      <div class="modal fade" id="releaseModal" tabindex="-1" aria-labelledby="releaseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="releaseModalLabel">Release Dinosaur?</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Doing this will release your dinosaur back to the wild. This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+              <form method="post" action="">
+                {% csrf_token %}
+                <button type="submit" name="release_dino" class="btn btn-danger">Confirm Release</button>
+              </form>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
