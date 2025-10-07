@@ -26,12 +26,12 @@ def your_dinosaurs(request):
     dinosaurs = Dinosaur.objects.filter(owner=request.user)
     print(f"DEBUG: Found {dinosaurs.count()} dinosaurs for user {request.user}")
     for dino in dinosaurs:
-        print(f"DEBUG: Dino {dino.name}, stage={dino.stage}, species_name='{dino.species_name}'")
-        species = dino.species_name.strip().lower()
-        is_green_egg = species == 'green egg'
-        is_orange_egg = species == 'orange egg'
-        is_blue_egg = species == 'blue egg'
-        print(f"DEBUG: {dino.name} species='{species}' is_green_egg={is_green_egg} is_orange_egg={is_orange_egg} is_blue_egg={is_blue_egg} stage='{dino.stage}'")
+        raw_species = dino.species_name
+        species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
+        is_green_egg = 'green egg' in species
+        is_orange_egg = 'orange egg' in species
+        is_blue_egg = 'blue egg' in species
+        print(f"DEBUG: {dino.name} RAW species_name='{raw_species}' PROCESSED species='{species}' is_green_egg={is_green_egg} is_orange_egg={is_orange_egg} is_blue_egg={is_blue_egg} stage='{dino.stage}'")
         if dino.stage == 'juvenile':
             if is_green_egg:
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
@@ -52,7 +52,7 @@ def your_dinosaurs(request):
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
         else:
             dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-        print(f"DEBUG: {dino.name} FINAL image_path='{dino.image_path}' for species_name='{dino.species_name}'")
+        print(f"DEBUG: {dino.name} FINAL image_path='{dino.image_path}' for RAW species_name='{raw_species}' PROCESSED species='{species}'")
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
 from django.contrib.auth import get_user_model
 
