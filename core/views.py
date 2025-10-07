@@ -27,27 +27,29 @@ def your_dinosaurs(request):
     print(f"DEBUG: Found {dinosaurs.count()} dinosaurs for user {request.user}")
     for dino in dinosaurs:
         print(f"DEBUG: Dino {dino.name}, stage={dino.stage}, species={dino.species_name}")
-        species = dino.species_name.strip().lower()
+        species = dino.species_name.strip().lower().replace('_', ' ').replace('-', ' ')
+        print(f"DEBUG: {dino.name} species_name='{dino.species_name}' mapped_species='{species}' stage='{dino.stage}'")
         if dino.stage == 'juvenile':
-            if species == 'green egg':
+            if 'green' in species:
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-            elif species == 'orange egg':
+            elif 'orange' in species:
                 dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
-            elif species == 'blue egg':
+            elif 'blue' in species:
                 dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
             else:
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
         elif dino.stage == 'adult':
-            if species == 'green egg':
+            if 'green' in species:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
-            elif species == 'orange egg':
+            elif 'orange' in species:
                 dino.image_path = "images/adult dinos/orange_trike_adult.png"
-            elif species == 'blue egg':
+            elif 'blue' in species:
                 dino.image_path = "images/adult dinos/blue_spino_adult.png"
             else:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
         else:
             dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+        print(f"DEBUG: {dino.name} image_path='{dino.image_path}'")
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
 from django.contrib.auth import get_user_model
 
