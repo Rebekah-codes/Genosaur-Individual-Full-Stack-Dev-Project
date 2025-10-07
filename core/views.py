@@ -232,12 +232,16 @@ def register(request):
 # Optionally filter: eggs = Egg.objects.filter(is_hatched=False)
 def home(request):
     try:
-        eggs = Egg.objects.all().select_related('dinosaur')
-        return render(request, 'home.html', {'eggs': eggs})
+        eggs = Egg.objects.filter(owner=request.user) if request.user.is_authenticated else Egg.objects.none()
+        has_egg = eggs.exists() if request.user.is_authenticated else False
+        has_dino = False
+        if request.user.is_authenticated:
+            has_dino = Dinosaur.objects.filter(owner=request.user).exists()
+        return render(request, 'home.html', {'eggs': eggs, 'has_egg': has_egg, 'has_dino': has_dino})
     except Exception as e:
         import logging
         logging.error(f"Error in home view: {e}")
-        return render(request, 'home.html', {'eggs': [], 'error': str(e)})
+        return render(request, 'home.html', {'eggs': [], 'error': str(e), 'has_egg': False, 'has_dino': False})
 
 # Hatch egg view
 def hatch_egg(request, egg_id):

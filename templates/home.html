@@ -61,5 +61,11 @@
 		{% empty %}
 			<p class="text-center">No eggs yet — time to earn your first one!</p>
 		{% endfor %}
-	</div>
-{% endblock %}
+			</div>
+			{% if not has_egg and not has_dino %}
+			<div class="text-center mt-4">
+				 <div class="alert alert-warning">You don't have any eggs yet!</div>
+				 <a href="{% url 'claim_egg' %}" class="btn btn-success">Claim Your First Egg</a>
+			</div>
+			{% endif %}
+		{% endblock %}
