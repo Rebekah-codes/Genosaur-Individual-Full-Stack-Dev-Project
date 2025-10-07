@@ -15,7 +15,7 @@
             {% endif %}
             <h4 class="mt-2">{{ dino.name }}</h4>
             <p>Species: {{ dino.species_name }}</p>
-              <p>Stage: {% if dino.stage == 'hatchling' %}Juvenile{% else %}{{ dino.stage|title }}{% endif %}</p>
+              <p>Stage: {{ dino.stage|title }}</p>
             <p>Mood: {{ dino.mood }}</p>
             <a href="{% url 'dinosaur_detail' dino.id %}" class="btn btn-brown mt-2">View Details</a>
           </div>

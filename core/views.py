@@ -35,14 +35,7 @@ def your_dinosaurs(request):
                 'orange': 'orange_trike_juvie.png',
             }
             dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
-        elif dino.stage == 'hatchling':
-            # If any dinosaurs are still hatchling, treat as juvenile for image
-            image_map = {
-                'green': 'green_rex_juvie.png',
-                'blue': 'blue_spino_juvie.png',
-                'orange': 'orange_trike_juvie.png',
-            }
-            dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
+        # Remove hatchling stage, all new dinos are juvenile
         elif dino.stage == 'adult':
             image_map = {
                 'green': 'green_rex_adult.png',
@@ -51,7 +44,7 @@ def your_dinosaurs(request):
             }
             dino.image_path = f"images/adult dinos/{image_map.get(color, 'green_rex_adult.png')}"
         else:
-            dino.image_path = "images/hatchling.png"
+            dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
 from django.contrib.auth import get_user_model
 
@@ -315,7 +308,7 @@ def perform_action(request, dino_id):
         if action_type == "feed":
             outcome = f"{dino.name} enjoyed a tasty meal!"
             dino.mood = "happy"
-            if dino.stage == "hatchling" and feed_actions + 1 >= 3:
+            # Remove hatchling logic, all new dinos are juvenile
                 dino.stage = "juvenile"
                 outcome += f" 🌱 {dino.name} has grown into a Juvenile!"
                 messages.success(request, f"{dino.name} evolved into a Juvenile!")
