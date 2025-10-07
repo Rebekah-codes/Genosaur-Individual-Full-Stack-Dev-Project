@@ -75,11 +75,11 @@ class Dinosaur(models.Model):
     def get_sprite(self):
         """Return the relative static path for the dino's current stage sprite."""
         stage_sprites = {
-            "hatchling": "images/hatchling.png",
+            "hatchling": "images/hatching egg/green_hatching_egg.png",
             "juvenile": "images/juvenile.png",
             "adult": "images/adult.png",
         }
-        return stage_sprites.get(self.stage, "images/hatchling.png")
+    return stage_sprites.get(self.stage, "images/hatching egg/green_hatching_egg.png")
 
     def level_up(self, amount=1):
         """Increase level but cap at 100."""
