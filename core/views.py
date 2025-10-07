@@ -235,9 +235,14 @@ def register(request):
 def home(request):
     try:
         eggs = Egg.objects.filter(owner=request.user) if request.user.is_authenticated else Egg.objects.none()
+        # Only count eggs that are not released (i.e., still exist)
         has_egg = eggs.exists() if request.user.is_authenticated else False
         has_dino = False
         if request.user.is_authenticated:
+            has_dino = Dinosaur.objects.filter(owner=request.user).exists()
+        # If user has no eggs and no dinosaurs, allow claiming
+        if request.user.is_authenticated:
+            has_egg = Egg.objects.filter(owner=request.user).exists()
             has_dino = Dinosaur.objects.filter(owner=request.user).exists()
         return render(request, 'home.html', {'eggs': eggs, 'has_egg': has_egg, 'has_dino': has_dino})
     except Exception as e:
