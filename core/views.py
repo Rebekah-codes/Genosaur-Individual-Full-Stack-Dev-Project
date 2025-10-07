@@ -235,32 +235,41 @@ def hatch_egg(request, egg_id):
 # Dino profile view
 @login_required
 def dinosaur_detail(request, dino_id):
-    dino = get_object_or_404(Dinosaur, id=dino_id)
-    actions = dino.actions.order_by('-timestamp')
-    total_actions = dino.actions.count()
-    feed_actions = dino.actions.filter(action_type="feed").count()
-    feeds_needed = 3
-    actions_needed = 5
-    feed_progress = min(feed_actions, feeds_needed)
-    action_progress = min(total_actions, actions_needed)
-    feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
-    action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
-    feed_complete = feed_progress >= feeds_needed
-    action_complete = action_progress >= actions_needed
-    level_percent = int((dino.level / 100) * 100)
-    return render(request, 'dinosaur_detail.html', {
-        'dino': dino,
-        'actions': actions,
-        'feed_progress': feed_progress,
-        'feeds_needed': feeds_needed,
-        'action_progress': action_progress,
-        'actions_needed': actions_needed,
-        'feed_percent': feed_percent,
-        'action_percent': action_percent,
-        'feed_complete': feed_complete,
-        'action_complete': action_complete,
-        'level_percent': level_percent,
-    })
+    import logging
+    try:
+        dino = get_object_or_404(Dinosaur, id=dino_id)
+        actions = dino.actions.order_by('-timestamp')
+        total_actions = dino.actions.count()
+        feed_actions = dino.actions.filter(action_type="feed").count()
+        feeds_needed = 3
+        actions_needed = 5
+        feed_progress = min(feed_actions, feeds_needed)
+        action_progress = min(total_actions, actions_needed)
+        feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
+        action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
+        feed_complete = feed_progress >= feeds_needed
+        action_complete = action_progress >= actions_needed
+        level_percent = int((dino.level / 100) * 100)
+        return render(request, 'dinosaur_detail.html', {
+            'dino': dino,
+            'actions': actions,
+            'feed_progress': feed_progress,
+            'feeds_needed': feeds_needed,
+            'action_progress': action_progress,
+            'actions_needed': actions_needed,
+            'feed_percent': feed_percent,
+            'action_percent': action_percent,
+            'feed_complete': feed_complete,
+            'action_complete': action_complete,
+            'level_percent': level_percent,
+        })
+    except Exception as e:
+        logging.error(f"Error in dinosaur_detail view: {e}")
+        return render(request, 'dinosaur_detail.html', {
+            'dino': None,
+            'actions': [],
+            'error': str(e),
+        })
 
 # Hatching page view
 from django.conf import settings
