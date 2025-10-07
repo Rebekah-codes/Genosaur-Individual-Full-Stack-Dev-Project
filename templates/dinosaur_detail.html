@@ -35,7 +35,7 @@
     <p>Level {{ dino.level }}/100</p>
     <div class="progress mb-4">
    <div class="progress-bar bg-primary" role="progressbar"
-  style="width: {{ level_percent|default:'0'|float|int }}%;"
+  style="width: {{ level_percent|default:'0'|int }}%;"
      aria-valuenow="{{ dino.level }}" aria-valuemin="0" aria-valuemax="100">
         {{ dino.level }}/100
       </div>
@@ -48,7 +48,7 @@
       <div class="progress-bar 
         {% if feed_complete %}bg-success pulse{% elif feed_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
       role="progressbar"
-  style="width: {{ feed_percent|default:'0'|float|int }}%;"
+  style="width: {{ feed_percent|default:'0'|int }}%;"
       aria-valuenow="{{ feed_progress }}" aria-valuemin="0" aria-valuemax="{{ feeds_needed }}">
         {{ feed_progress }}/{{ feeds_needed }}
       </div>
@@ -58,7 +58,7 @@
       <div class="progress-bar 
         {% if action_complete %}bg-success pulse{% elif action_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
       role="progressbar"
-  style="width: {{ action_percent|default:'0'|float|int }}%;"
+  style="width: {{ action_percent|default:'0'|int }}%;"
       aria-valuenow="{{ action_progress }}" aria-valuemin="0" aria-valuemax="{{ actions_needed }}">
         {{ action_progress }}/{{ actions_needed }}
       </div>
