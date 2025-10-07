@@ -351,7 +351,8 @@ def perform_action(request, dino_id):
             # If dino is juvenile and has enough feed actions, evolve to adult
             feeds_needed = 3
             evolved = False
-            if dino.stage == "juvenile" and feed_actions + 1 >= feeds_needed:
+            # Evolve if feed_actions >= feeds_needed and not already adult
+            if dino.stage != "adult" and feed_actions >= feeds_needed:
                 dino.stage = "adult"
                 outcome += f" 🦉 {dino.name} has evolved into an Adult!"
                 messages.success(request, f"{dino.name} evolved into an Adult!")
