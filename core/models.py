@@ -79,7 +79,7 @@ class Dinosaur(models.Model):
             "juvenile": "images/juvenile.png",
             "adult": "images/adult.png",
         }
-    return stage_sprites.get(self.stage, "images/hatching egg/green_hatching_egg.png")
+        return stage_sprites.get(self.stage, "images/hatching egg/green_hatching_egg.png")
 
     def level_up(self, amount=1):
         """Increase level but cap at 100."""
