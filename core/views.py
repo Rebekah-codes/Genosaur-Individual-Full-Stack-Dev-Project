@@ -247,8 +247,8 @@ def hatch_egg(request, egg_id):
         egg.is_hatched = True
         egg.save()
         create_dinosaur_from_egg(egg)
-        return redirect('hatching_page', egg_id=egg_id)
-    return redirect('home')
+    # Always redirect to hatching page
+    return redirect('hatching_page', egg_id=egg_id)
 
 # Dino profile view
 @login_required
