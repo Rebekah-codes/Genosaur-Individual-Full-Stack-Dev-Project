@@ -123,14 +123,23 @@ import random
 def egg_detail(request, egg_id):
     egg = get_object_or_404(Egg, id=egg_id, owner=request.user)
     message = None
-    if not egg.is_hatched:
-        if egg.twigs >= 5 and egg.leaves >= 5:
-            egg.is_hatched = True
-            egg.save()
-            create_dinosaur_from_egg(egg)
-            return redirect('hatching_page', egg_id=egg.id)
-        elif request.method == 'POST':
-            if 'set_egg_name' in request.POST:
+    if request.method == 'POST':
+        if 'release_egg' in request.POST:
+            # Delete associated dinosaur if exists
+            dino = getattr(egg, 'dinosaur', None)
+            if dino:
+                dino.delete()
+            egg.delete()
+            from django.contrib import messages
+            messages.success(request, "Your egg and dinosaur have been released to the wild!")
+            return redirect('active_nests')
+        if not egg.is_hatched:
+            if egg.twigs >= 5 and egg.leaves >= 5:
+                egg.is_hatched = True
+                egg.save()
+                create_dinosaur_from_egg(egg)
+                return redirect('hatching_page', egg_id=egg.id)
+            elif 'set_egg_name' in request.POST:
                 new_name = request.POST.get('egg_name', '').strip()
                 if new_name:
                     egg.name = new_name
@@ -166,7 +175,7 @@ def egg_detail(request, egg_id):
                     message = 'You sang to the egg. It glows softly!'
                 else:
                     message = 'You sang to the egg. No change.'
-    else:
+    elif egg.is_hatched:
         # Ensure dinosaur exists for already hatched eggs
         create_dinosaur_from_egg(egg)
         message = 'Your egg has already hatched!'
