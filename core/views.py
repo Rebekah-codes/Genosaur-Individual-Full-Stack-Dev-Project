@@ -258,6 +258,12 @@ def dinosaur_detail(request, dino_id):
     import logging
     try:
         dino = get_object_or_404(Dinosaur, id=dino_id)
+        # Ensure orphaned egg is deleted if dinosaur exists and is not an egg
+        if dino.egg:
+            try:
+                dino.egg.delete()
+            except Exception:
+                pass
         if request.method == 'POST':
             if 'release_dino' in request.POST:
                 dino.delete()
