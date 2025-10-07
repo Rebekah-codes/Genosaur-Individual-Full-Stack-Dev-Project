@@ -26,11 +26,9 @@
           {% if dino %}
             <h2 class="card-title">🦕
               {{ dino.name|default:dino.species_name }}
-              {% if dino.name %}
-                <button type="button" class="btn btn-link p-0 ms-2" style="vertical-align:middle;" data-bs-toggle="modal" data-bs-target="#editNameModal">
-                  <i class="bi bi-pencil" style="font-size:1.1em;"></i>
-                </button>
-              {% endif %}
+              <button type="button" class="btn btn-link p-0 ms-2" style="vertical-align:middle;" data-bs-toggle="modal" data-bs-target="#editNameModal">
+                <i class="bi bi-pencil" style="font-size:1.1em;"></i>
+              </button>
             </h2>
             <p class="lead">{{ dino.species_name }}</p>
             <p>
