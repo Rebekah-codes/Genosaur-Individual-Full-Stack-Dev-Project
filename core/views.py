@@ -309,9 +309,9 @@ def perform_action(request, dino_id):
             outcome = f"{dino.name} enjoyed a tasty meal!"
             dino.mood = "happy"
             # Remove hatchling logic, all new dinos are juvenile
-                dino.stage = "juvenile"
-                outcome += f" 🌱 {dino.name} has grown into a Juvenile!"
-                messages.success(request, f"{dino.name} evolved into a Juvenile!")
+              dino.stage = "juvenile"
+              outcome += f" 🌱 {dino.name} has grown into a Juvenile!"
+              messages.success(request, f"{dino.name} evolved into a Juvenile!")
         elif action_type == "play":
             outcome = f"{dino.name} had fun playing!"
             dino.mood = "playful"
