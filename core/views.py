@@ -69,7 +69,9 @@ def dashboard(request):
     import logging
     try:
         has_egg = Egg.objects.filter(owner=request.user).exists()
-        juvenile_dinos = Dinosaur.objects.filter(owner=request.user, stage='juvenile')
+        all_dinos = Dinosaur.objects.filter(owner=request.user)
+        juvenile_dinos = all_dinos.filter(stage='juvenile')
+        has_dino = all_dinos.exists()
         for dino in juvenile_dinos:
             color = dino.species_name.split()[0].lower()
             image_map = {
@@ -78,7 +80,7 @@ def dashboard(request):
                 'orange': 'orange_trike_juvie.png',
             }
             dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
-        return render(request, 'dashboard.html', {'has_egg': has_egg, 'juvenile_dinos': juvenile_dinos})
+        return render(request, 'dashboard.html', {'has_egg': has_egg, 'juvenile_dinos': juvenile_dinos, 'has_dino': has_dino})
     except Exception as e:
         logging.error(f"Dashboard error: {e}")
         return render(request, 'dashboard.html', {'has_egg': False, 'juvenile_dinos': [], 'error': str(e)})
