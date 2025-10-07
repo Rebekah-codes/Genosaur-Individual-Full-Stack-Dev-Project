@@ -238,6 +238,7 @@ def dinosaur_detail(request, dino_id):
         actions_needed = 5
         feed_progress = min(feed_actions, feeds_needed)
         action_progress = min(total_actions, actions_needed)
+        # Calculate percent for progress bars
         feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
         action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
         feed_complete = feed_progress >= feeds_needed
@@ -308,10 +309,12 @@ def perform_action(request, dino_id):
         if action_type == "feed":
             outcome = f"{dino.name} enjoyed a tasty meal!"
             dino.mood = "happy"
-            # Remove hatchling logic, all new dinos are juvenile
-              dino.stage = "juvenile"
-              outcome += f" 🌱 {dino.name} has grown into a Juvenile!"
-              messages.success(request, f"{dino.name} evolved into a Juvenile!")
+            # If dino is juvenile and has enough feed actions, evolve to adult
+            feeds_needed = 3
+            if dino.stage == "juvenile" and feed_actions + 1 >= feeds_needed:
+                dino.stage = "adult"
+                outcome += f" 🦉 {dino.name} has evolved into an Adult!"
+                messages.success(request, f"{dino.name} evolved into an Adult!")
         elif action_type == "play":
             outcome = f"{dino.name} had fun playing!"
             dino.mood = "playful"
