@@ -27,22 +27,22 @@ def your_dinosaurs(request):
     print(f"DEBUG: Found {dinosaurs.count()} dinosaurs for user {request.user}")
     for dino in dinosaurs:
         print(f"DEBUG: Dino {dino.name}, stage={dino.stage}, species={dino.species_name}")
-        color = dino.species_name.split()[0].lower()
+        species = dino.species_name.strip().lower()
         if dino.stage == 'juvenile':
-            if color == 'green':
+            if species == 'green egg':
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-            elif color == 'orange':
+            elif species == 'orange egg':
                 dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
-            elif color == 'blue':
+            elif species == 'blue egg':
                 dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
             else:
                 dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
         elif dino.stage == 'adult':
-            if color == 'green':
+            if species == 'green egg':
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
-            elif color == 'orange':
+            elif species == 'orange egg':
                 dino.image_path = "images/adult dinos/orange_trike_adult.png"
-            elif color == 'blue':
+            elif species == 'blue egg':
                 dino.image_path = "images/adult dinos/blue_spino_adult.png"
             else:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
