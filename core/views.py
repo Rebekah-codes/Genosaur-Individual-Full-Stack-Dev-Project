@@ -32,26 +32,33 @@ def your_dinosaurs(request):
         is_orange_egg = 'orange egg' in species
         is_blue_egg = 'blue egg' in species
         print(f"DEBUG: {dino.name} RAW species_name='{raw_species}' PROCESSED species='{species}' is_green_egg={is_green_egg} is_orange_egg={is_orange_egg} is_blue_egg={is_blue_egg} stage='{dino.stage}'")
-        if dino.stage == 'juvenile':
-            if is_green_egg:
-                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-            elif is_orange_egg:
-                dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
-            elif is_blue_egg:
-                dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
-            else:
-                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
-        elif dino.stage == 'adult':
+        # Treat any non-adult stage as 'juvenile' for image purposes
+        if dino.stage == 'adult':
             if is_green_egg:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
+                print(f"DEBUG: {dino.name} assigned adult GREEN image")
             elif is_orange_egg:
                 dino.image_path = "images/adult dinos/orange_trike_adult.png"
+                print(f"DEBUG: {dino.name} assigned adult ORANGE image")
             elif is_blue_egg:
                 dino.image_path = "images/adult dinos/blue_spino_adult.png"
+                print(f"DEBUG: {dino.name} assigned adult BLUE image")
             else:
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
+                print(f"DEBUG: {dino.name} assigned adult DEFAULT image")
         else:
-            dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+            if is_green_egg:
+                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                print(f"DEBUG: {dino.name} assigned juvenile GREEN image")
+            elif is_orange_egg:
+                dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
+                print(f"DEBUG: {dino.name} assigned juvenile ORANGE image")
+            elif is_blue_egg:
+                dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
+                print(f"DEBUG: {dino.name} assigned juvenile BLUE image")
+            else:
+                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                print(f"DEBUG: {dino.name} assigned juvenile DEFAULT image")
         print(f"DEBUG: {dino.name} FINAL image_path='{dino.image_path}' for RAW species_name='{raw_species}' PROCESSED species='{species}'")
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
 from django.contrib.auth import get_user_model
