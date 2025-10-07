@@ -24,7 +24,14 @@
       <div class="card shadow-sm text-center" style="background-color:#F5E6C8; color:#6B4F23; border-radius:16px;">
         <div class="card-body">
           {% if dino %}
-            <h2 class="card-title">🦕 {{ dino.name|default:dino.species_name }}</h2>
+            <h2 class="card-title">🦕
+              {{ dino.name|default:dino.species_name }}
+              {% if dino.name %}
+                <button type="button" class="btn btn-link p-0 ms-2" style="vertical-align:middle;" data-bs-toggle="modal" data-bs-target="#editNameModal">
+                  <i class="bi bi-pencil" style="font-size:1.1em;"></i>
+                </button>
+              {% endif %}
+            </h2>
             <p class="lead">{{ dino.species_name }}</p>
             <p>
               <strong>Stage:</strong> {{ dino.stage }}<br>
@@ -93,19 +100,39 @@
     {% endif %}
 
     {% if dino %}
-    <!-- Perform Action Form -->
-    <h4>Interact with {{ dino.name }}</h4>
-    <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
-      {% csrf_token %}
-      <div class="input-group">
-        <select name="action_type" class="form-select">
-          <option value="feed">Feed</option>
-          <option value="play">Play</option>
-          <option value="train">Train</option>
-        </select>
-  <button type="submit" class="btn btn-brown">Do Action</button>
+      {% if not dino.name %}
+      <!-- Dino naming form -->
+      <form method="post" action="" class="mb-3">
+        {% csrf_token %}
+        <div class="mb-2">
+          <label for="dino_name" class="form-label">Dinosaur Name:</label>
+          <input type="text" id="dino_name" name="dino_name" class="form-control" value="{{ dino.name }}" maxlength="100" placeholder="Give your dinosaur a name...">
+        </div>
+        <button type="submit" name="set_dino_name" class="btn btn-warning">Set Name</button>
+      </form>
+      {% endif %}
+
+      <!-- Edit Name Modal -->
+      <div class="modal fade" id="editNameModal" tabindex="-1" aria-labelledby="editNameModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editNameModalLabel">Edit Dinosaur Name</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="">
+              <div class="modal-body">
+                {% csrf_token %}
+                <input type="text" id="dino_name_edit" name="dino_name" class="form-control" value="{{ dino.name }}" maxlength="100" placeholder="Edit dinosaur name...">
+              </div>
+              <div class="modal-footer">
+                <button type="submit" name="set_dino_name" class="btn btn-warning">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Go Back</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-    </form>
     {% endif %}
 
     {% if dino %}

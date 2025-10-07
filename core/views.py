@@ -9,7 +9,7 @@ from .models import Egg, Dinosaur, RaiseAction, Trait
 def create_dinosaur_from_egg(egg):
     # Only create if not already linked
     if not hasattr(egg, 'dinosaur') or egg.dinosaur is None:
-        dino_name = f"{egg.species_name}-{get_random_string(4)}"
+        dino_name = egg.name if egg.name else f"{egg.species_name}-{get_random_string(4)}"
         return Dinosaur.objects.create(
             name=dino_name,
             species_name=egg.species_name,
@@ -261,11 +261,22 @@ def dinosaur_detail(request, dino_id):
     import logging
     try:
         dino = get_object_or_404(Dinosaur, id=dino_id)
-        if request.method == 'POST' and 'release_dino' in request.POST:
-            dino.delete()
-            from django.contrib import messages
-            messages.success(request, "Your dinosaur has been released to the wild!")
-            return redirect('your_dinosaurs')
+        if request.method == 'POST':
+            if 'release_dino' in request.POST:
+                dino.delete()
+                from django.contrib import messages
+                messages.success(request, "Your dinosaur has been released to the wild!")
+                return redirect('your_dinosaurs')
+            elif 'set_dino_name' in request.POST:
+                new_name = request.POST.get('dino_name', '').strip()
+                if new_name:
+                    dino.name = new_name
+                    dino.save()
+                    from django.contrib import messages
+                    messages.success(request, f"Dinosaur named '{new_name}'!")
+                else:
+                    from django.contrib import messages
+                    messages.error(request, "Dinosaur name cannot be empty.")
         actions = dino.actions.order_by('-timestamp')
         total_actions = dino.actions.count()
         feed_actions = dino.actions.filter(action_type="feed").count()
