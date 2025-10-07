@@ -259,6 +259,30 @@ def dinosaur_detail(request, dino_id):
         feed_complete = feed_progress >= feeds_needed
         action_complete = action_progress >= actions_needed
         level_percent = int((dino.level / 100) * 100)
+        # Image mapping logic (same as inventory)
+        raw_species = dino.species_name
+        species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
+        is_green_egg = 'green egg' in species
+        is_orange_egg = 'orange egg' in species
+        is_blue_egg = 'blue egg' in species
+        if dino.stage == 'adult':
+            if is_green_egg:
+                dino.image_path = "images/adult dinos/green_rex_adult.png"
+            elif is_orange_egg:
+                dino.image_path = "images/adult dinos/orange_trike_adult.png"
+            elif is_blue_egg:
+                dino.image_path = "images/adult dinos/blue_spino_adult.png"
+            else:
+                dino.image_path = "images/adult dinos/green_rex_adult.png"
+        else:
+            if is_green_egg:
+                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+            elif is_orange_egg:
+                dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
+            elif is_blue_egg:
+                dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
+            else:
+                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
         return render(request, 'dinosaur_detail.html', {
             'dino': dino,
             'actions': actions,
