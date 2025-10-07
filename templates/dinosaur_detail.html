@@ -64,6 +64,7 @@
       </div>
     </div>
 
+    {% if dino %}
     <!-- Perform Action Form -->
     <h4>Interact with {{ dino.name }}</h4>
     <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
@@ -77,6 +78,7 @@
         <button type="submit" class="btn btn-primary">Do Action</button>
       </div>
     </form>
+    {% endif %}
 
     {% if dino.stage == 'juvenile' %}
       <h4 class="mt-4">Wilderness Search</h4>
