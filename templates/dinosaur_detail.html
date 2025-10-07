@@ -136,6 +136,19 @@
     {% endif %}
 
     {% if dino %}
+      <!-- Action Form for all stages -->
+      <h4>Interact with {{ dino.name }}</h4>
+      <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
+        {% csrf_token %}
+        <div class="input-group">
+          <select name="action_type" class="form-select">
+            <option value="feed">Feed</option>
+            <option value="play">Play</option>
+            <option value="train">Train</option>
+          </select>
+          <button type="submit" class="btn btn-brown">Do Action</button>
+        </div>
+      </form>
       {% if dino.stage == 'juvenile' %}
         <h4 class="mt-4">Wilderness Search</h4>
         <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
