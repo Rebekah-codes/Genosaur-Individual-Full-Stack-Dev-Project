@@ -29,20 +29,23 @@ def your_dinosaurs(request):
         print(f"DEBUG: Dino {dino.name}, stage={dino.stage}, species={dino.species_name}")
         color = dino.species_name.split()[0].lower()
         if dino.stage == 'juvenile':
-            image_map = {
-                'green': 'green_rex_juvie.png',
-                'blue': 'blue_spino_juvie.png',
-                'orange': 'orange_trike_juvie.png',
-            }
-            dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
-        # Remove hatchling stage, all new dinos are juvenile
+            if color == 'green':
+                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+            elif color == 'orange':
+                dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
+            elif color == 'blue':
+                dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
+            else:
+                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
         elif dino.stage == 'adult':
-            image_map = {
-                'green': 'green_rex_adult.png',
-                'blue': 'blue_spino_adult.png',
-                'orange': 'orange_trike_adult.png',
-            }
-            dino.image_path = f"images/adult dinos/{image_map.get(color, 'green_rex_adult.png')}"
+            if color == 'green':
+                dino.image_path = "images/adult dinos/green_rex_adult.png"
+            elif color == 'orange':
+                dino.image_path = "images/adult dinos/orange_trike_adult.png"
+            elif color == 'blue':
+                dino.image_path = "images/adult dinos/blue_spino_adult.png"
+            else:
+                dino.image_path = "images/adult dinos/green_rex_adult.png"
         else:
             dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
