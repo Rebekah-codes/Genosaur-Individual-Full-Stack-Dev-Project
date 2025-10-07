@@ -350,10 +350,36 @@ def perform_action(request, dino_id):
             dino.mood = "happy"
             # If dino is juvenile and has enough feed actions, evolve to adult
             feeds_needed = 3
+            evolved = False
             if dino.stage == "juvenile" and feed_actions + 1 >= feeds_needed:
                 dino.stage = "adult"
                 outcome += f" 🦉 {dino.name} has evolved into an Adult!"
                 messages.success(request, f"{dino.name} evolved into an Adult!")
+                evolved = True
+            # Apply image mapping logic after possible evolution
+            raw_species = dino.species_name
+            species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
+            is_green_egg = 'green egg' in species
+            is_orange_egg = 'orange egg' in species
+            is_blue_egg = 'blue egg' in species
+            if dino.stage == 'adult':
+                if is_green_egg:
+                    dino.image_path = "images/adult dinos/green_rex_adult.png"
+                elif is_orange_egg:
+                    dino.image_path = "images/adult dinos/orange_trike_adult.png"
+                elif is_blue_egg:
+                    dino.image_path = "images/adult dinos/blue_spino_adult.png"
+                else:
+                    dino.image_path = "images/adult dinos/green_rex_adult.png"
+            else:
+                if is_green_egg:
+                    dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                elif is_orange_egg:
+                    dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
+                elif is_blue_egg:
+                    dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
+                else:
+                    dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
         elif action_type == "play":
             outcome = f"{dino.name} had fun playing!"
             dino.mood = "playful"
