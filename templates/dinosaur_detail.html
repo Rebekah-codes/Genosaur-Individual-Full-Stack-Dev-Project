@@ -30,7 +30,7 @@
               <strong>Stage:</strong> {{ dino.stage }}<br>
               <strong>Mood:</strong> {{ dino.mood }}
             </p>
-            <img src="{% static dino.get_sprite %}"
+            <img src="{% static dino.image_path %}"
               alt="{{ dino.stage }} sprite"
               class="img-fluid mb-3 evolve-sprite"
               style="max-width: 200px;">
