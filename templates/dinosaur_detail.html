@@ -8,8 +8,8 @@
 {% if not dino %}
 <div class="alert alert-danger text-center">Dinosaur not found or an error occurred.</div>
 {% endif %}
-<div class="card shadow-sm mx-auto" style="max-width: 600px;">
-  <div class="card-body text-center">
+<div class="card shadow-sm mx-auto card-brown" style="max-width: 600px; background-color:#F5E6C8; color:#fff;">
+  <div class="card-body text-center" style="background-color:#A6895B; color:#fff; border-radius:10px;">
   {% if dino %}
     <h2 class="card-title">🦕 {{ dino.name|default:dino.species_name }}</h2>
     <p class="lead">{{ dino.species_name }}</p>
