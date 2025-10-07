@@ -247,8 +247,6 @@ def hatch_egg(request, egg_id):
         egg.is_hatched = True
         egg.save()
         create_dinosaur_from_egg(egg)
-        # Delete the egg after hatching and dinosaur creation
-        egg.delete()
         return redirect('hatching_page', egg_id=egg_id)
     return redirect('home')
 
