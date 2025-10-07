@@ -74,12 +74,25 @@ class Dinosaur(models.Model):
 
     def get_sprite(self):
         """Return the relative static path for the dino's current stage sprite."""
-        stage_sprites = {
-            "hatchling": "images/hatching egg/green_hatching_egg.png",
-            "juvenile": "images/juvenile.png",
-            "adult": "images/adult.png",
-        }
-        return stage_sprites.get(self.stage, "images/hatching egg/green_hatching_egg.png")
+        color = self.species_name.split()[0].lower()
+        if self.stage == "juvenile":
+            image_map = {
+                'green': 'green_rex_juvie.png',
+                'blue': 'blue_spino_juvie.png',
+                'orange': 'orange_trike_juvie.png',
+            }
+            return f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
+        elif self.stage == "adult":
+            image_map = {
+                'green': 'green_rex_adult.png',
+                'blue': 'blue_spino_adult.png',
+                'orange': 'orange_trike_adult.png',
+            }
+            return f"images/adult dinos/{image_map.get(color, 'green_rex_adult.png')}"
+        elif self.stage == "hatchling":
+            return "images/hatching egg/green_hatching_egg.png"
+        else:
+            return "images/hatching egg/green_hatching_egg.png"
 
     def level_up(self, amount=1):
         """Increase level but cap at 100."""
