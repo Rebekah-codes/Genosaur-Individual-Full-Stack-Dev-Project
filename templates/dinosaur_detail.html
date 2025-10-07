@@ -8,29 +8,37 @@
 {% if not dino %}
 <div class="alert alert-danger text-center">Dinosaur not found or an error occurred.</div>
 {% endif %}
-<div class="card shadow-sm mx-auto" style="max-width: 600px; background-color:#F5E6C8; color:#6B4F23; border-radius:16px;">
-  <div class="card-body text-center" style="background-color:#F5E6C8; color:#6B4F23; border-radius:16px;">
-  {% if dino %}
-    <h2 class="card-title">🦕 {{ dino.name|default:dino.species_name }}</h2>
-    <p class="lead">{{ dino.species_name }}</p>
-    <p>
-      <strong>Stage:</strong> {{ dino.stage }}<br>
-      <strong>Mood:</strong> {{ dino.mood }}
-    </p>
-  {% endif %}
 
-    <!-- Dino sprite with fallback -->
-    {% if dino and dino.get_sprite %}
-      <img src="{% static dino.get_sprite %}"
-        alt="{{ dino.stage }} sprite"
-        class="img-fluid mb-3 evolve-sprite"
-        style="max-width: 200px;">
-    {% else %}
-      <img src="{% static 'images/eggs/green_egg.png' %}"
-        alt="Fallback sprite"
-        class="img-fluid mb-3 evolve-sprite"
-        style="max-width: 200px;">
-    {% endif %}
+<div class="container mt-4" style="max-width: 700px;">
+  <div class="row justify-content-center">
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm text-center" style="background-color:#F5E6C8; color:#6B4F23; border-radius:16px;">
+        <div class="card-body">
+          {% if dino %}
+            <h2 class="card-title">🦕 {{ dino.name|default:dino.species_name }}</h2>
+            <p class="lead">{{ dino.species_name }}</p>
+            <p>
+              <strong>Stage:</strong> {{ dino.stage }}<br>
+              <strong>Mood:</strong> {{ dino.mood }}
+            </p>
+          {% endif %}
+          {% if dino and dino.get_sprite %}
+            <img src="{% static dino.get_sprite %}"
+              alt="{{ dino.stage }} sprite"
+              class="img-fluid mb-3 evolve-sprite"
+              style="max-width: 200px;">
+          {% else %}
+            <img src="{% static 'images/eggs/green_egg.png' %}"
+              alt="Fallback sprite"
+              class="img-fluid mb-3 evolve-sprite"
+              style="max-width: 200px;">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card shadow-sm" style="background-color:#F5E6C8; color:#6B4F23; border-radius:16px;">
+        <div class="card-body">
 
 
     {% if dino %}
