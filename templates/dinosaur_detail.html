@@ -162,21 +162,39 @@
 
 
     {% if dino %}
-      <!-- Traits -->
+      <!-- Traits: Only show trait names -->
       <h4 class="mt-4">Traits</h4>
       {% if dino.traits.all %}
         <ul class="list-group mb-3">
           {% for trait in dino.traits.all %}
             <li class="list-group-item">
-              <strong>{{ trait.name }}</strong> — {{ trait.description }}
-              {% if trait.mood_impact %}
-                <span class="badge bg-info text-dark">{{ trait.mood_impact }}</span>
-              {% endif %}
+              <strong>{{ trait.name }}</strong>
             </li>
           {% endfor %}
         </ul>
       {% else %}
         <p>No traits unlocked yet.</p>
+      {% endif %}
+
+      <!-- Trait Unlock Modal -->
+      {% if request.GET.trait_unlocked %}
+      <div class="modal fade show" id="traitUnlockModal" tabindex="-1" aria-labelledby="traitUnlockModalLabel" aria-modal="true" style="display:block; background:rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="traitUnlockModalLabel">Trait Unlocked!</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="document.getElementById('traitUnlockModal').style.display='none';"></button>
+            </div>
+            <div class="modal-body">
+              <strong>{{ request.GET.trait_name }}</strong><br>
+              <span>{{ request.GET.trait_description }}</span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('traitUnlockModal').style.display='none';">Continue</button>
+            </div>
+          </div>
+        </div>
+      </div>
       {% endif %}
     {% endif %}
 

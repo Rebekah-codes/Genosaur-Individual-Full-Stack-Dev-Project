@@ -1,58 +1,92 @@
 [
   {
-    "model": "yourapp.egg",
+    "model": "core.trait",
     "pk": 1,
     "fields": {
-      "species_name": "Tyrannosaur",
-      "element_type": "Earth",
-      "rarity": "Common",
-      "owner": 1,
-      "is_hatched": false,
-      "created_at": "2025-10-02T12:00:00Z"
-    }
-  },
-  {
-    "model": "yourapp.egg",
-    "pk": 2,
-    "fields": {
-      "species_name": "Pteranodon",
-      "element_type": "Air",
-      "rarity": "Rare",
-      "owner": 1,
-      "is_hatched": false,
-      "created_at": "2025-10-02T12:05:00Z"
-    }
-  },
-  {
-    "model": "yourapp.trait",
-    "pk": 1,
-    "fields": {
-      "name": "Playful",
-      "description": "This dino loves to play and explore.",
+      "name": "Strong Bite",
+      "description": "Can bite through stone and tough materials.",
       "mood_impact": "+Playful"
     }
   },
   {
-    "model": "yourapp.trait",
+    "model": "core.trait",
     "pk": 2,
     "fields": {
-      "name": "Calm",
-      "description": "This dino is steady and relaxed.",
+      "name": "Fast Runner",
+      "description": "Sprints quickly across any terrain.",
+      "mood_impact": "+Energetic"
+    }
+  },
+  {
+    "model": "core.trait",
+    "pk": 3,
+    "fields": {
+      "name": "Gentle Giant",
+      "description": "Calms nearby dinosaurs and eases tension.",
       "mood_impact": "+Calm"
     }
   },
   {
-    "model": "yourapp.dinosaur",
-    "pk": 1,
+    "model": "core.trait",
+    "pk": 4,
     "fields": {
-      "name": "Rexy",
-      "species_name": "Tyrannosaur",
-      "stage": "hatchling",
-      "mood": "happy",
-      "traits": [1],
-      "egg": 1,
-      "owner": 1,
-      "created_at": "2025-10-02T12:10:00Z"
+      "name": "Keen Senses",
+      "description": "Detects hidden items and dangers in the wilderness.",
+      "mood_impact": "+Alert"
+    }
+  },
+  {
+    "model": "core.trait",
+    "pk": 5,
+    "fields": {
+      "name": "Loyal Companion",
+      "description": "Forms strong bonds with its owner.",
+      "mood_impact": "+Happy"
+    }
+  },
+  {
+    "model": "core.trait",
+    "pk": 6,
+    "fields": {
+      "name": "Elemental Roar",
+      "description": "Unleashes a roar that matches its elemental type.",
+      "mood_impact": "+Confident"
+    }
+  },
+  {
+    "model": "core.trait",
+    "pk": 7,
+    "fields": {
+      "name": "Night Vision",
+      "description": "Sees clearly in the dark, perfect for nighttime adventures.",
+      "mood_impact": "+Curious"
+    }
+  },
+  {
+    "model": "core.trait",
+    "pk": 8,
+    "fields": {
+      "name": "Thick Hide",
+      "description": "Resistant to damage and harsh environments.",
+      "mood_impact": "+Brave"
+    }
+  },
+  {
+    "model": "core.trait",
+    "pk": 9,
+    "fields": {
+      "name": "Playful Tail",
+      "description": "Uses its tail for games and playful interactions.",
+      "mood_impact": "+Playful"
+    }
+  },
+  {
+    "model": "core.trait",
+    "pk": 10,
+    "fields": {
+      "name": "Healing Aura",
+      "description": "Restores mood and health to nearby dinosaurs.",
+      "mood_impact": "+Supportive"
     }
   }
 ]
