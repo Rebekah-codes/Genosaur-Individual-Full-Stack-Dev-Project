@@ -34,3 +34,23 @@ body {
   background-color: #A6895B !important;
   color: #fff;
 }
+
+/* Responsive buttons and images for mobile */
+@media (max-width: 576px) {
+  .btn, .btn-lg, .btn-success, .btn-warning, .btn-brown {
+    font-size: 1rem !important;
+    padding: 0.5rem 1rem !important;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  img, .img-fluid {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .navbar-brand img {
+    height: 48px !important;
+  }
+}
