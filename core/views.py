@@ -5,8 +5,8 @@ def cancel_trade(request, trade_id):
     trade.save()
     messages.success(request, 'Trade offer cancelled.')
     return redirect('trade_center')
-from .models import Trade
 from django.contrib.auth.decorators import login_required
+from .models import Trade
 from django.db.models import Q
 from django import forms
 from django.core.exceptions import ValidationError
