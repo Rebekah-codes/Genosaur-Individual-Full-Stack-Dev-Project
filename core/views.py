@@ -1,3 +1,10 @@
+@login_required
+def cancel_trade(request, trade_id):
+    trade = get_object_or_404(Trade, id=trade_id, sender=request.user, status='pending')
+    trade.status = 'declined'
+    trade.save()
+    messages.success(request, 'Trade offer cancelled.')
+    return redirect('trade_center')
 from .models import Trade
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q

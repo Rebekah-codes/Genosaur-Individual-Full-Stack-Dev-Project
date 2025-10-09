@@ -35,7 +35,11 @@
         <td>
           {% if trade.status == 'pending' and trade.receiver == user %}
             <a href="{% url 'accept_trade' trade.id %}" class="btn btn-success btn-sm">Accept</a>
-          {% else %}
+          {% endif %}
+          {% if trade.status == 'pending' and trade.sender == user %}
+            <a href="{% url 'cancel_trade' trade.id %}" class="btn btn-danger btn-sm ms-2">Cancel</a>
+          {% endif %}
+          {% if not (trade.status == 'pending' and (trade.receiver == user or trade.sender == user)) %}
             -
           {% endif %}
         </td>
