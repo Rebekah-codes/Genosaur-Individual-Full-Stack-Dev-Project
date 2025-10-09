@@ -62,7 +62,7 @@ def trade_center(request):
             trade.save()
             messages.success(request, 'Trade offer submitted!')
             return redirect('trade_center')
-    return render(request, 'trade_center.html', {'form': form, 'trades': trades})
+    return render(request, 'trade_center.html', {'form': form, 'trades': trades, 'user': request.user})
 
 @login_required
 def accept_trade(request, trade_id):
