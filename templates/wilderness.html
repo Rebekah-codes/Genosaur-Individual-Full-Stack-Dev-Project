@@ -1,15 +1,15 @@
 {% load static %}
-{# {% extends 'base.html' %} #}
-{# {% block content %} #}
+{% extends 'base.html' %}
+{% block content %}
 <div class="container mt-5">
 	<div class="row justify-content-center">
 		<div class="col-md-8 text-center">
 			<div class="card shadow-sm p-4" style="background-color:#F5E6C8; border-radius:16px;">
 				<h2 class="mb-3" style="color:#4B3A1A;">Wilderness Map</h2>
-	<img src="{% static 'images/wilderness/wilderness_map.png' %}" alt="Wilderness Map" class="img-fluid mb-4" style="max-width:400px; border-radius:12px;">
-	{% if error %}
-	<div class="alert alert-danger mt-3">Error: {{ error }}</div>
-	{% endif %}
+				<img src="{% static 'images/wilderness/wilderness_map.png' %}" alt="Wilderness Map" class="img-fluid mb-4" style="max-width:400px; border-radius:12px;">
+				{% if error %}
+				<div class="alert alert-danger mt-3">Error: {{ error }}</div>
+				{% endif %}
 				<form method="POST" action="">
 					{% csrf_token %}
 					<button type="submit" class="btn btn-success btn-lg">Search the Wilderness</button>
@@ -18,4 +18,4 @@
 		</div>
 	</div>
 </div>
-{# {% endblock %} #}
+{% endblock %}
