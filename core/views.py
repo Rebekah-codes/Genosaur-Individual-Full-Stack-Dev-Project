@@ -15,8 +15,6 @@ from django.http import HttpResponse
 def test_view(request):
     return render(request, "test.html")
 
-@login_required
-@csrf_protect
 def wilderness(request):
     return render(request, "wilderness.html")
 
