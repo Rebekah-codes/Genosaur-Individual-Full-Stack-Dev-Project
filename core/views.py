@@ -23,7 +23,7 @@ def wilderness(request):
     except Exception as e:
         logging.error(f"Wilderness view error: {e}")
         error = str(e)
-    return render(request, "wilderness.html", {"error": error})
+    return render(request, "wilderness.html", {"error": error, "user": request.user, "messages": messages.get_messages(request)})
 
 def create_dinosaur_from_egg(egg):
     # Only create if not already linked
