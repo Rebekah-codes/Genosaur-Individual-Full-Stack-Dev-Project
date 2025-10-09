@@ -9,9 +9,14 @@
 				<div class="d-flex justify-content-center">
 					<img src="{% static 'images/wilderness/wilderness_map.png' %}" alt="Wilderness Map" class="img-fluid mb-4" style="max-width:800px; width:100%; border-radius:12px;">
 				</div>
+				{% if message %}
+					<div class="alert alert-info mt-3">{{ message }}</div>
+				{% endif %}
 				<form method="POST" action="">
 					{% csrf_token %}
-					<button type="submit" class="btn btn-success btn-lg mt-4">Search the Wilderness</button>
+					<button type="submit" class="btn btn-success btn-lg mt-4" {% if not can_search %}disabled{% endif %}>
+						{% if not can_search %}Search Limit Reached{% else %}Search the Wilderness{% endif %}
+					</button>
 				</form>
 			</div>
 		</div>

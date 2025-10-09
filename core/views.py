@@ -97,8 +97,48 @@ from django.contrib.auth.decorators import login_required
 
 
 def wilderness(request):
-    print("DEBUG: wilderness view reached, method:", request.method)
-    return render(request, "wilderness.html")
+    from django.utils import timezone
+    from datetime import timedelta
+    import random
+    messages_list = [
+        "You saw some dinosaurs but got scared and hid until it was clear.",
+        "You heard rustling in the bushes, but nothing appeared.",
+        "You found some tracks, but the creatures were long gone.",
+        "A sudden roar made you freeze, and you decided to stay hidden.",
+        "You explored quietly, but the wilderness was empty this time."
+    ]
+    user = request.user
+    now = timezone.now()
+    # Store wilderness search timestamps in session
+    searches = request.session.get('wilderness_searches', [])
+    # Remove searches older than 24 hours
+    searches = [ts for ts in searches if timezone.datetime.fromisoformat(ts) > now - timedelta(hours=24)]
+    can_search = len(searches) < 5
+    found_egg = None
+    message = None
+    if request.method == "POST" and can_search:
+        searches.append(now.isoformat())
+        request.session['wilderness_searches'] = searches
+        if random.random() < 0.25:
+            egg_color = random.choice(['green', 'orange', 'blue'])
+            egg_data = {
+                'green': {'species_name': 'Green Egg', 'element_type': 'Earth', 'rarity': 'Common'},
+                'orange': {'species_name': 'Orange Egg', 'element_type': 'Fire', 'rarity': 'Common'},
+                'blue': {'species_name': 'Blue Egg', 'element_type': 'Water', 'rarity': 'Common'},
+            }
+            Egg.objects.create(
+                species_name=egg_data[egg_color]['species_name'],
+                element_type=egg_data[egg_color]['element_type'],
+                rarity=egg_data[egg_color]['rarity'],
+                owner=user
+            )
+            found_egg = egg_data[egg_color]['species_name']
+            message = f"You found a {found_egg}!"
+        else:
+            message = random.choice(messages_list)
+    elif request.method == "POST" and not can_search:
+        message = "You have reached your search limit for today. Please come back in 24 hours."
+    return render(request, "wilderness.html", {"can_search": can_search, "message": message, "found_egg": found_egg})
 
 def create_dinosaur_from_egg(egg):
     # Only create if not already linked
