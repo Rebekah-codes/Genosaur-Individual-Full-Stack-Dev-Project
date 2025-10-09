@@ -7,19 +7,7 @@
 			<div class="card shadow-sm p-4" style="background-color:#F5E6C8; border-radius:16px;">
 				<h2 class="mb-3" style="color:#4B3A1A;">Wilderness Map</h2>
 				<img src="{% static 'images/wilderness/wilderness_map.png' %}" alt="Wilderness Map" class="img-fluid mb-4" style="max-width:400px; border-radius:12px;">
-						{% if error %}
-						<div class="alert alert-danger mt-3">Error: {{ error }}</div>
-						{% endif %}
-						<div class="alert alert-info mt-3">User: {{ user }}</div>
-						<div class="alert alert-warning mt-3">Messages:
-							<ul>
-							{% for m in messages %}
-								<li>{{ m }}</li>
-							{% empty %}
-								<li>No messages</li>
-							{% endfor %}
-							</ul>
-						</div>
+						<!-- Debug blocks removed: error, user, messages -->
 				<form method="POST" action="">
 					{% csrf_token %}
 					<button type="submit" class="btn btn-success btn-lg">Search the Wilderness</button>
