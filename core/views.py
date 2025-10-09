@@ -13,6 +13,7 @@ def wilderness_test(request):
     return render(request, "wilderness_test.html")
 
 def wilderness(request):
+    print("DEBUG: wilderness view reached, method:", request.method)
     return render(request, "wilderness.html")
 
 def create_dinosaur_from_egg(egg):
