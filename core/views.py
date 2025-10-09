@@ -10,6 +10,11 @@ from .models import Egg, Dinosaur, RaiseAction, Trait
 import logging
 from django.contrib.auth.decorators import login_required
 
+# Minimal test view for error isolation
+from django.http import HttpResponse
+def test_view(request):
+    return render(request, "test.html")
+
 @login_required
 @csrf_protect
 def wilderness(request):
