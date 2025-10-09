@@ -1,4 +1,13 @@
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout as auth_logout, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.utils.crypto import get_random_string
+from django.contrib import messages  # for toast notifications
 from django.views.decorators.csrf import csrf_protect
+from .models import Egg, Dinosaur, RaiseAction, Trait
+
 # Wilderness page view
 @login_required
 @csrf_protect
@@ -7,16 +16,8 @@ def wilderness(request):
     if request.method == "POST":
         # Placeholder: Add wilderness search logic here
         message = "You searched the wilderness! (Feature coming soon)"
-        from django.contrib import messages
         messages.info(request, message)
     return render(request, "wilderness.html")
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import logout as auth_logout, login as auth_login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.utils.crypto import get_random_string
-from django.contrib import messages  # for toast notifications
-from .models import Egg, Dinosaur, RaiseAction, Trait
 
 def create_dinosaur_from_egg(egg):
     # Only create if not already linked
@@ -221,19 +222,14 @@ def login_view(request):
     else:
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
-from django.shortcuts import render, get_object_or_404, redirect
-from django.utils.crypto import get_random_string
-from django.contrib import messages  # for toast notifications
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
-from .models import Egg, Dinosaur, RaiseAction, Trait
+
 # Registration view
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            auth_login(request, user)
             messages.success(request, 'Registration successful!')
             return redirect('dashboard')
         else:
