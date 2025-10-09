@@ -13,6 +13,20 @@ class TradeForm(forms.ModelForm):
         if user:
             self.fields['sender_egg'].queryset = user.eggs.all()
             self.fields['sender_dinosaur'].queryset = user.dinosaurs.all()
+        # Dynamically filter receiver's items if receiver is selected
+        receiver = None
+        if self.data.get('receiver'):
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            try:
+                receiver = User.objects.get(pk=self.data.get('receiver'))
+            except (User.DoesNotExist, ValueError, TypeError):
+                receiver = None
+        elif self.initial.get('receiver'):
+            receiver = self.initial.get('receiver')
+        if receiver:
+            self.fields['receiver_egg'].queryset = receiver.eggs.all()
+            self.fields['receiver_dinosaur'].queryset = receiver.dinosaurs.all()
     class Meta:
         model = Trade
         fields = ['receiver', 'sender_egg', 'sender_dinosaur', 'receiver_egg', 'receiver_dinosaur']
