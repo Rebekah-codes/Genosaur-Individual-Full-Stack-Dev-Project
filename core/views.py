@@ -6,6 +6,13 @@ from django.core.exceptions import ValidationError
 
 # Trade form for 1-for-1 trades
 class TradeForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['sender_egg'].queryset = user.eggs.all()
+            self.fields['sender_dinosaur'].queryset = user.dinosaurs.all()
     class Meta:
         model = Trade
         fields = ['receiver', 'sender_egg', 'sender_dinosaur', 'receiver_egg', 'receiver_dinosaur']
@@ -24,9 +31,9 @@ class TradeForm(forms.ModelForm):
 def trade_center(request):
     # Show all pending trades involving the user
     trades = Trade.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-created_at')
-    form = TradeForm()
+    form = TradeForm(user=request.user)
     if request.method == 'POST':
-        form = TradeForm(request.POST)
+        form = TradeForm(request.POST, user=request.user)
         if form.is_valid():
             trade = form.save(commit=False)
             trade.sender = request.user
