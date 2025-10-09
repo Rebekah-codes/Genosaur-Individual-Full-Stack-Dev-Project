@@ -13,16 +13,17 @@ from django.contrib.auth.decorators import login_required
 @login_required
 @csrf_protect
 def wilderness(request):
+    error = None
+    message = None
     try:
-        message = None
         if request.method == "POST":
             # Placeholder: Add wilderness search logic here
             message = "You searched the wilderness! (Feature coming soon)"
             messages.info(request, message)
-        return render(request, "wilderness.html")
     except Exception as e:
         logging.error(f"Wilderness view error: {e}")
-        return render(request, "wilderness.html", {"error": str(e)})
+        error = str(e)
+    return render(request, "wilderness.html", {"error": error})
 
 def create_dinosaur_from_egg(egg):
     # Only create if not already linked
