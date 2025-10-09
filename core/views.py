@@ -1,3 +1,15 @@
+from django.views.decorators.csrf import csrf_protect
+# Wilderness page view
+@login_required
+@csrf_protect
+def wilderness(request):
+    message = None
+    if request.method == "POST":
+        # Placeholder: Add wilderness search logic here
+        message = "You searched the wilderness! (Feature coming soon)"
+        from django.contrib import messages
+        messages.info(request, message)
+    return render(request, "wilderness.html")
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout, login as auth_login
