@@ -1,23 +1,28 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout as auth_logout, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.utils.crypto import get_random_string
 from django.contrib import messages  # for toast notifications
 from django.views.decorators.csrf import csrf_protect
 from .models import Egg, Dinosaur, RaiseAction, Trait
-
 # Wilderness page view
+import logging
+from django.contrib.auth.decorators import login_required
+
 @login_required
 @csrf_protect
 def wilderness(request):
-    message = None
-    if request.method == "POST":
-        # Placeholder: Add wilderness search logic here
-        message = "You searched the wilderness! (Feature coming soon)"
-        messages.info(request, message)
-    return render(request, "wilderness.html")
+    try:
+        message = None
+        if request.method == "POST":
+            # Placeholder: Add wilderness search logic here
+            message = "You searched the wilderness! (Feature coming soon)"
+            messages.info(request, message)
+        return render(request, "wilderness.html")
+    except Exception as e:
+        logging.error(f"Wilderness view error: {e}")
+        return render(request, "wilderness.html", {"error": str(e)})
 
 def create_dinosaur_from_egg(egg):
     # Only create if not already linked
