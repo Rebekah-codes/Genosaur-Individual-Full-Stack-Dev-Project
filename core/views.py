@@ -9,8 +9,6 @@ from .models import Egg, Dinosaur, RaiseAction, Trait
 import logging
 from django.contrib.auth.decorators import login_required
 
-def wilderness_test(request):
-    return render(request, "wilderness_test.html")
 
 def wilderness(request):
     print("DEBUG: wilderness view reached, method:", request.method)
