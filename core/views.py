@@ -1,3 +1,61 @@
+from .models import Trade
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django import forms
+from django.core.exceptions import ValidationError
+
+# Trade form for 1-for-1 trades
+class TradeForm(forms.ModelForm):
+    class Meta:
+        model = Trade
+        fields = ['receiver', 'sender_egg', 'sender_dinosaur', 'receiver_egg', 'receiver_dinosaur']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        sender_items = [cleaned_data.get('sender_egg'), cleaned_data.get('sender_dinosaur')]
+        receiver_items = [cleaned_data.get('receiver_egg'), cleaned_data.get('receiver_dinosaur')]
+        if sum([item is not None for item in sender_items]) != 1:
+            raise ValidationError('You must offer exactly one item (egg or dinosaur).')
+        if sum([item is not None for item in receiver_items]) != 1:
+            raise ValidationError('You must request exactly one item (egg or dinosaur) in return.')
+        return cleaned_data
+
+@login_required
+def trade_center(request):
+    # Show all pending trades involving the user
+    trades = Trade.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-created_at')
+    form = TradeForm()
+    if request.method == 'POST':
+        form = TradeForm(request.POST)
+        if form.is_valid():
+            trade = form.save(commit=False)
+            trade.sender = request.user
+            trade.status = 'pending'
+            trade.save()
+            messages.success(request, 'Trade offer submitted!')
+            return redirect('trade_center')
+    return render(request, 'trade_center.html', {'form': form, 'trades': trades})
+
+@login_required
+def accept_trade(request, trade_id):
+    trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
+    # Swap ownership of items
+    if trade.sender_egg:
+        trade.sender_egg.owner = trade.receiver
+        trade.sender_egg.save()
+    if trade.sender_dinosaur:
+        trade.sender_dinosaur.owner = trade.receiver
+        trade.sender_dinosaur.save()
+    if trade.receiver_egg:
+        trade.receiver_egg.owner = trade.sender
+        trade.receiver_egg.save()
+    if trade.receiver_dinosaur:
+        trade.receiver_dinosaur.owner = trade.sender
+        trade.receiver_dinosaur.save()
+    trade.status = 'accepted'
+    trade.save()
+    messages.success(request, 'Trade accepted and items swapped!')
+    return redirect('trade_center')
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm

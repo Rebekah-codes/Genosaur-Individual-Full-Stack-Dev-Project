@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Trade Center</h2>
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Propose a Trade</h5>
+      <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-brown">Submit Trade Offer</button>
+      </form>
+    </div>
+  </div>
+  <h4>Pending Trades</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Sender</th>
+        <th>Sender Item</th>
+        <th>Receiver</th>
+        <th>Receiver Item</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for trade in trades %}
+      <tr>
+        <td>{{ trade.sender.username }}</td>
+        <td>{% if trade.sender_egg %}Egg: {{ trade.sender_egg }}{% elif trade.sender_dinosaur %}Dino: {{ trade.sender_dinosaur }}{% endif %}</td>
+        <td>{{ trade.receiver.username }}</td>
+        <td>{% if trade.receiver_egg %}Egg: {{ trade.receiver_egg }}{% elif trade.receiver_dinosaur %}Dino: {{ trade.receiver_dinosaur }}{% endif %}</td>
+        <td>{{ trade.status }}</td>
+        <td>
+          {% if trade.status == 'pending' and trade.receiver == user %}
+            <a href="{% url 'accept_trade' trade.id %}" class="btn btn-success btn-sm">Accept</a>
+          {% else %}
+            -
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6">No trades found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

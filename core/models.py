@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 
 class Egg(models.Model):
@@ -131,9 +132,23 @@ class Trade(models.Model):
         on_delete=models.CASCADE,
         related_name='received_trades'
     )
-    dinosaur = models.ForeignKey(Dinosaur, on_delete=models.CASCADE, related_name='trades')
+    sender_egg = models.ForeignKey(Egg, null=True, blank=True, on_delete=models.SET_NULL, related_name='sent_trades')
+    sender_dinosaur = models.ForeignKey(Dinosaur, null=True, blank=True, on_delete=models.SET_NULL, related_name='sent_dino_trades')
+    receiver_egg = models.ForeignKey(Egg, null=True, blank=True, on_delete=models.SET_NULL, related_name='received_trades')
+    receiver_dinosaur = models.ForeignKey(Dinosaur, null=True, blank=True, on_delete=models.SET_NULL, related_name='received_dino_trades')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def clean(self):
+        # Enforce 1-for-1 trade: only one item per side
+        sender_items = [self.sender_egg, self.sender_dinosaur]
+        receiver_items = [self.receiver_egg, self.receiver_dinosaur]
+        if sum([item is not None for item in sender_items]) != 1:
+            raise ValidationError('Sender must offer exactly one item (egg or dinosaur).')
+        if sum([item is not None for item in receiver_items]) != 1:
+            raise ValidationError('Receiver must offer exactly one item (egg or dinosaur).')
+
     def __str__(self):
-        return f"Trade: {self.dinosaur.name} from {self.sender} to {self.receiver} ({self.status})"
+        sender_item = self.sender_egg or self.sender_dinosaur
+        receiver_item = self.receiver_egg or self.receiver_dinosaur
+        return f"Trade: {sender_item} for {receiver_item} ({self.status})"

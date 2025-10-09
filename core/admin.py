@@ -32,6 +32,6 @@ class RaiseActionAdmin(admin.ModelAdmin):
 
 @admin.register(Trade)
 class TradeAdmin(admin.ModelAdmin):
-    list_display = ("dinosaur", "sender", "receiver", "status", "created_at")
+    list_display = ("sender", "sender_egg", "sender_dinosaur", "receiver", "receiver_egg", "receiver_dinosaur", "status", "created_at")
     list_filter = ("status", "created_at")
-    search_fields = ("dinosaur__name", "sender__username", "receiver__username")
+    search_fields = ("sender__username", "receiver__username", "sender_egg__species_name", "sender_dinosaur__name", "receiver_egg__species_name", "receiver_dinosaur__name")

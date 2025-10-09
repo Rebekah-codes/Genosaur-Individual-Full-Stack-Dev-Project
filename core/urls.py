@@ -16,4 +16,6 @@ urlpatterns = [
     path('egg/<int:egg_id>/', views.egg_detail, name='egg_detail'),
     path('hatching/<int:egg_id>/', views.hatching_page, name='hatching_page'),
     path('your-dinosaurs/', views.your_dinosaurs, name='your_dinosaurs'),
+    path('trade-center/', views.trade_center, name='trade_center'),
+    path('trade-center/accept/<int:trade_id>/', views.accept_trade, name='accept_trade'),
 ]
