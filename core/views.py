@@ -18,16 +18,6 @@ def test_view(request):
 @login_required
 @csrf_protect
 def wilderness(request):
-    error = None
-    message = None
-    try:
-        if request.method == "POST":
-            # Placeholder: Add wilderness search logic here
-            message = "You searched the wilderness! (Feature coming soon)"
-            messages.info(request, message)
-    except Exception as e:
-        logging.error(f"Wilderness view error: {e}")
-        error = str(e)
     return render(request, "wilderness.html")
 
 def create_dinosaur_from_egg(egg):
