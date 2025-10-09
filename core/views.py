@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -10,10 +9,8 @@ from .models import Egg, Dinosaur, RaiseAction, Trait
 import logging
 from django.contrib.auth.decorators import login_required
 
-# Minimal test view for error isolation
-from django.http import HttpResponse
-def test_view(request):
-    return render(request, "test.html")
+def wilderness_test(request):
+    return render(request, "wilderness_test.html")
 
 def wilderness(request):
     return render(request, "wilderness.html")

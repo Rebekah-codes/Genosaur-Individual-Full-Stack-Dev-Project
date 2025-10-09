@@ -17,4 +17,5 @@ urlpatterns = [
     path('hatching/<int:egg_id>/', views.hatching_page, name='hatching_page'),
     path('your-dinosaurs/', views.your_dinosaurs, name='your_dinosaurs'),
     path('test/', views.test_view, name='test_view'),
+    path('wilderness-test/', views.wilderness_test, name='wilderness_test'),
 ]
