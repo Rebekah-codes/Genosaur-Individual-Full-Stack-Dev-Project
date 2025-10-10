@@ -4,7 +4,7 @@
 {% block content %}
   <div class="hatching-container d-flex flex-column justify-content-center align-items-center text-center main-content" style="min-height:80vh;">
     <h2>{{ message }}</h2>
-  <img src="{% static image_path %}" alt="Hatching Egg" style="max-width:90px; width:100%; height:auto;">
+  <img src="{% static image_path %}" alt="Hatching Egg" class="hatching-egg-img">
     <p>Your {{ egg.species_name }} is hatching!</p>
     <a href="{% url 'dashboard' %}" class="btn btn-brown mt-3">Go to Dashboard</a>
   </div>

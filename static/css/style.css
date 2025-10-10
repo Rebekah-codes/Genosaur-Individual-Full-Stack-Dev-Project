@@ -1,3 +1,18 @@
+/* Hatching egg image size */
+.hatching-egg-img {
+  max-width: 400px !important;
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 576px) {
+  .hatching-egg-img {
+    max-width: 192px !important;
+  }
+}
 .evolve-sprite {
   max-width: 200px !important;
   width: 100% !important;
