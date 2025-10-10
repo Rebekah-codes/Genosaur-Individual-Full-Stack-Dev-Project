@@ -2,7 +2,15 @@
 {% load static %}
 {% block content %}
 <div class="container text-center py-5 main-content">
-  <img src="{% static 'images/logo/genosaur_logo_optimized_.webp' %}" alt="Genosaur Logo" style="max-width: 400px; width: 100%; height: auto; margin-bottom: 2rem;">
+  <img 
+    src="{% static 'images/logo/genosaur_logo_optimized_small.webp' %}"
+    srcset="{% static 'images/logo/genosaur_logo_optimized_small.webp' %} 48w, {% static 'images/logo/genosaur_logo_optimized_.webp' %} 400w"
+    sizes="(max-width: 600px) 48px, 400px"
+    alt="Genosaur Logo"
+    width="48" height="48"
+    style="max-width: 400px; width: 100%; height: auto; margin-bottom: 2rem;"
+    loading="lazy"
+  >
   <h1 class="mb-3">Welcome to Genosaur!</h1>
   <p class="lead mb-4">Raise, trade, and explore a world of dinosaurs. Hatch eggs, build your nest, and discover rare items in the wilderness. Join the adventure!</p>
   <div class="d-flex justify-content-center gap-3">
