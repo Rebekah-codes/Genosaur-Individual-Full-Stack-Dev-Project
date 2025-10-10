@@ -1,5 +1,5 @@
-/* Ensure footer text is white */
-.footer, .footer *, .footer a {
+/* Ensure footer text is white, including icons and links */
+.footer, .footer *, .footer a, .footer i, .footer span {
   color: #fff !important;
 }
 .btn-brown,
