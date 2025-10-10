@@ -11,7 +11,6 @@ from django.db.models import Q
 from django import forms
 from django.core.exceptions import ValidationError
 
-# Trade form for 1-for-1 trades
 class TradeForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -91,7 +90,6 @@ from django.utils.crypto import get_random_string
 from django.contrib import messages  # for toast notifications
 from django.views.decorators.csrf import csrf_protect
 from .models import Egg, Dinosaur, RaiseAction, Trait
-# Wilderness page view
 import logging
 from django.contrib.auth.decorators import login_required
 
@@ -148,7 +146,6 @@ def wilderness(request):
     return render(request, "wilderness.html", {"can_search": can_search, "message": message, "found_egg": found_egg})
 
 def create_dinosaur_from_egg(egg):
-    # Only create if not already linked
     if not hasattr(egg, 'dinosaur') or egg.dinosaur is None:
         dino_name = egg.name if egg.name else f"{egg.species_name}-{get_random_string(4)}"
         return Dinosaur.objects.create(
@@ -161,7 +158,6 @@ def create_dinosaur_from_egg(egg):
         )
     return egg.dinosaur
 
-# Your dinosaurs inventory page
 @login_required
 def your_dinosaurs(request):
     dinosaurs = Dinosaur.objects.filter(owner=request.user)
@@ -204,7 +200,6 @@ def your_dinosaurs(request):
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
 from django.contrib.auth import get_user_model
 
-# Dashboard page for logged-in users
 @login_required
 def dashboard(request):
     import logging
@@ -226,7 +221,6 @@ def dashboard(request):
         logging.error(f"Dashboard error: {e}")
         return render(request, 'dashboard.html', {'has_egg': False, 'juvenile_dinos': [], 'error': str(e)})
 
-# Claim egg page for new users
 from django.views.decorators.csrf import csrf_protect
 @login_required
 @csrf_protect
@@ -253,14 +247,12 @@ def claim_egg(request):
             messages.error(request, 'Invalid egg selection.')
     return render(request, 'claim_egg.html')
 
-# Active nests page stub
 @login_required
 def active_nests(request):
     eggs = Egg.objects.filter(owner=request.user, is_hatched=False)
 
     return render(request, 'active_nests.html', {'eggs': eggs})
 
-# Egg detail page with wilderness search
 import random
 @login_required
 def egg_detail(request, egg_id):
@@ -323,20 +315,17 @@ def egg_detail(request, egg_id):
         create_dinosaur_from_egg(egg)
         message = 'Your egg has already hatched!'
     return render(request, 'egg_detail.html', {'egg': egg, 'message': message})
-# Landing page for unauthenticated users
 def landing(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     return render(request, 'landing.html')
 from django.contrib.auth import logout as auth_logout
-# Logout view
 def logout_view(request):
     auth_logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('landing')
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login as auth_login
-# Login view
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -351,7 +340,6 @@ def login_view(request):
         form = AuthenticationForm()
     return render(request, 'login.html', {'form': form})
 
-# Registration view
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -366,8 +354,6 @@ def register(request):
         form = UserCreationForm()
     return render(request, 'register.html', {'form': form})
 
-# Homepage: show all eggs
-# Optionally filter: eggs = Egg.objects.filter(is_hatched=False)
 def home(request):
     eggs = Egg.objects.filter(owner=request.user) if request.user.is_authenticated else Egg.objects.none()
     has_egg = Egg.objects.filter(owner=request.user, is_hatched=False).exists() if request.user.is_authenticated else False
@@ -376,7 +362,6 @@ def home(request):
     logging.warning(f"DEBUG home: has_egg={has_egg}, has_dino={has_dino}, eggs={eggs.count()}")
     return render(request, 'home.html', {'eggs': eggs, 'has_egg': has_egg, 'has_dino': has_dino})
 
-# Hatch egg view
 def hatch_egg(request, egg_id):
     egg = get_object_or_404(Egg, id=egg_id)
     if not egg.is_hatched:
@@ -386,7 +371,6 @@ def hatch_egg(request, egg_id):
     # Always redirect to hatching page
     return redirect('hatching_page', egg_id=egg_id)
 
-# Dino profile view
 @login_required
 def dinosaur_detail(request, dino_id):
     import logging
@@ -472,7 +456,6 @@ def dinosaur_detail(request, dino_id):
             'error': str(e),
         })
 
-# Hatching page view
 from django.conf import settings
 @login_required
 def hatching_page(request, egg_id):
@@ -506,7 +489,6 @@ def hatching_page(request, egg_id):
         'level_percent': level_percent,
     })
 
-# Perform feed/play/train action
 def perform_action(request, dino_id):
     dino = get_object_or_404(Dinosaur, id=dino_id)
     if request.method == "POST":

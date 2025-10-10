@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 class Egg(models.Model):
     name = models.CharField(max_length=100, blank=True)
     species_name = models.CharField(max_length=100)
-    element_type = models.CharField(max_length=50)   # e.g. Fire, Water, Earth
-    rarity = models.CharField(max_length=50)         # e.g. Common, Rare, Legendary
+    element_type = models.CharField(max_length=50)
+    rarity = models.CharField(max_length=50)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -16,7 +16,7 @@ class Egg(models.Model):
     is_hatched = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Nest materials for hatching
+    
     twigs = models.PositiveIntegerField(default=0)
     leaves = models.PositiveIntegerField(default=0)
 
@@ -140,7 +140,7 @@ class Trade(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def clean(self):
-        # Enforce 1-for-1 trade: only one item per side
+        
         sender_items = [self.sender_egg, self.sender_dinosaur]
         receiver_items = [self.receiver_egg, self.receiver_dinosaur]
         if sum([item is not None for item in sender_items]) != 1:

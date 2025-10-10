@@ -38,12 +38,12 @@
             <img src="{% static dino.image_path %}"
               alt="{{ dino.stage }} sprite"
               class="img-fluid mb-3 evolve-sprite"
-              style="max-width: 200px; width: 200px; height: auto;">
+              style="max-width: 200px; width: 100%; height: auto;">
           {% else %}
             <img src="{% static 'images/eggs/green_egg_optimized_.webp' %}"
               alt="Fallback sprite"
               class="img-fluid mb-3 evolve-sprite"
-              style="max-width: 200px; width: 200px; height: auto;">
+              style="max-width: 200px; width: 100%; height: auto;">
           {% endif %}
         </div>
       </div>
@@ -63,7 +63,6 @@
     {% endif %}
 
     {% if dino %}
-      <!-- Level Progress -->
       <p>Level {{ dino.level }}/100</p>
       <div class="progress mb-4">
         <div class="progress-bar bg-primary" role="progressbar"
@@ -73,7 +72,6 @@
         </div>
       </div>
 
-      <!-- Progress Bars -->
       <h4 class="mt-4">Progression</h4>
       <p>Feeds until evolution ({{ feed_progress }}/{{ feeds_needed }})</p>
       <div class="progress mb-3">
@@ -99,7 +97,6 @@
 
     {% if dino %}
       {% if not dino.name %}
-      <!-- Dino naming form -->
       <form method="post" action="" class="mb-3">
         {% csrf_token %}
         <div class="mb-2">
@@ -110,7 +107,6 @@
       </form>
       {% endif %}
 
-      <!-- Edit Name Modal -->
       <div class="modal fade" id="editNameModal" tabindex="-1" aria-labelledby="editNameModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -134,7 +130,6 @@
     {% endif %}
 
     {% if dino %}
-      <!-- Action Form for all stages -->
       <h4>Interact with {{ dino.name }}</h4>
       <form method="POST" action="{% url 'perform_action' dino.id %}" class="mb-4">
         {% csrf_token %}
@@ -148,7 +143,6 @@
         </div>
       </form>
       {% if dino.stage == 'juvenile' %}
-          <!-- Wilderness Search section removed as requested -->
       {% endif %}
     {% endif %}
 
@@ -156,7 +150,6 @@
 
 
     {% if dino %}
-      <!-- Traits: Only show trait names -->
       <h4 class="mt-4">Traits</h4>
       {% if dino.traits.all %}
         <ul class="list-group mb-3">
@@ -170,7 +163,6 @@
         <p>No traits unlocked yet.</p>
       {% endif %}
 
-      <!-- Trait Unlock Modal -->
       {% if request.GET.trait_unlocked %}
       <div class="modal fade show" id="traitUnlockModal" tabindex="-1" aria-labelledby="traitUnlockModalLabel" aria-modal="true" style="display:block; background:rgba(0,0,0,0.5);">
         <div class="modal-dialog modal-dialog-centered">
@@ -192,7 +184,6 @@
       {% endif %}
     {% endif %}
 
-    <!-- Recent Actions -->
     <h4 class="mt-4">Recent Actions</h4>
     {% if actions %}
       <div style="max-height: 300px; overflow-y: auto;">
@@ -208,10 +199,8 @@
     {% else %}
       <p>No actions yet. Try feeding, playing, or training!</p>
     {% endif %}
-    <!-- Release Button -->
     {% if dino %}
       <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#releaseModal">Release</button>
-      <!-- Release Modal -->
       <div class="modal fade" id="releaseModal" tabindex="-1" aria-labelledby="releaseModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">

@@ -21,7 +21,6 @@
             <p>Leaves: {{ egg.leaves }} / 5</p>
 
                         {% if not egg.name %}
-                        <!-- Egg naming form -->
                         <form method="post" action="" class="mb-3">
                                 {% csrf_token %}
                                 <div class="mb-2">
@@ -32,7 +31,6 @@
                         </form>
                         {% endif %}
 
-                        <!-- Edit Name Modal -->
                         <div class="modal fade" id="editNameModal" tabindex="-1" aria-labelledby="editNameModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
@@ -67,9 +65,7 @@
                                                 <button type="submit" name="turn_egg" class="btn btn-secondary ms-2">Turn Egg</button>
                                                 <button type="submit" name="sing_egg" class="btn btn-info ms-2">Sing to Egg</button>
                                         </form>
-                                        <!-- Release Button -->
                                         <button type="button" class="btn btn-danger mt-3" data-bs-toggle="modal" data-bs-target="#releaseModal">Release</button>
-                                        <!-- Release Modal -->
                                         <div class="modal fade" id="releaseModal" tabindex="-1" aria-labelledby="releaseModalLabel" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
