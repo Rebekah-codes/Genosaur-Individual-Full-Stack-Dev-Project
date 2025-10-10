@@ -1,3 +1,12 @@
+.btn-brown,
+.btn-brown *,
+.btn-brown:active,
+.btn-brown:focus,
+.btn-brown:hover,
+.btn-brown:visited,
+.btn-brown:link {
+  color: #fff !important;
+}
 /* Ensure .btn-brown has white text and correct background */
 .btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover {
   background-color: #A6895B !important;
