@@ -1,3 +1,64 @@
+/* Responsive improvements for mobile and tablet */
+@media (max-width: 991px) {
+  .container, .container-fluid {
+    width: 100% !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  .row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .col-md-10, .col-md-4, .col-md-3, .col-md-6, .col-12 {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    margin-bottom: 1rem !important;
+  }
+  .card {
+    margin-bottom: 1rem !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .navbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .navbar-nav {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .navbar-brand img {
+    height: 48px !important;
+  }
+  .footer {
+    font-size: 1rem !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  h1, h2, h3, h4 {
+    font-size: 1.3em !important;
+  }
+  .btn, .btn-lg, .btn-success, .btn-warning, .btn-brown {
+    font-size: 1rem !important;
+    padding: 0.5rem 1rem !important;
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  img, .img-fluid {
+    max-width: 100% !important;
+    height: auto !important;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .card-body, .modal-body, .modal-footer {
+    padding: 1rem !important;
+  }
+  .modal-content {
+    border-radius: 12px !important;
+  }
+}
 /* Custom brown button */
 .btn-brown {
   background-color: #A6895B;
