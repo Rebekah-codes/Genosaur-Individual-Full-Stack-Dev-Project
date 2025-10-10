@@ -1,5 +1,6 @@
-/* Force all buttons to have white text */
-button, .btn, .btn-brown, .btn-success, .btn-danger, .btn-warning, .btn-primary, .btn-secondary, .btn-info, .btn-dark {
+/* Force all buttons to have white text, including all descendants */
+button, .btn, .btn-brown, .btn-success, .btn-danger, .btn-warning, .btn-primary, .btn-secondary, .btn-info, .btn-dark,
+button *, .btn *, .btn-brown *, .btn-success *, .btn-danger *, .btn-warning *, .btn-primary *, .btn-secondary *, .btn-info *, .btn-dark * {
   color: #fff !important;
 }
 /* Main content text color for all pages (excluding navbar and footer) */
