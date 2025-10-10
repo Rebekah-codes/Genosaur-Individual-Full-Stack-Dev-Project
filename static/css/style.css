@@ -1,3 +1,7 @@
+/* Force all buttons to have white text */
+button, .btn, .btn-brown, .btn-success, .btn-danger, .btn-warning, .btn-primary, .btn-secondary, .btn-info, .btn-dark {
+  color: #fff !important;
+}
 /* Main content text color for all pages (excluding navbar and footer) */
 .main-content, .main-content * {
   color: #4B3A1A !important;
