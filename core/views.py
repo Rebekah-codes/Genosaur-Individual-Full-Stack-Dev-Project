@@ -138,6 +138,13 @@ def wilderness(request):
             message = random.choice(messages_list)
     elif request.method == "POST" and not can_search:
         message = "You have reached your search limit for today. Please come back in 24 hours."
+    print("DEBUG wilderness view:", {
+        "can_search": can_search,
+        "message": message,
+        "found_egg": found_egg,
+        "searches": searches,
+        "user": user.username if user.is_authenticated else None
+    })
     return render(request, "wilderness.html", {"can_search": can_search, "message": message, "found_egg": found_egg})
 
 def create_dinosaur_from_egg(egg):
