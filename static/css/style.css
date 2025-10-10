@@ -1,3 +1,8 @@
+/* Force Bootstrap pencil icon to orange for name edit */
+.bi-pencil {
+  color: orange !important;
+  fill: orange !important;
+}
 /* Absolutely force all main buttons and footer to have white text in all states, highest specificity */
 .btn-success, .btn-success *, .btn-success:active, .btn-success:focus, .btn-success:hover, .btn-success:visited, .btn-success:link,
 .btn-danger, .btn-danger *, .btn-danger:active, .btn-danger:focus, .btn-danger:hover, .btn-danger:visited, .btn-danger:link,
