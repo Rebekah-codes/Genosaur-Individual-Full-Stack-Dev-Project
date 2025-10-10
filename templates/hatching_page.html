@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-  <div class="hatching-container d-flex flex-column justify-content-center align-items-center text-center" style="min-height:80vh;">
+  <div class="hatching-container d-flex flex-column justify-content-center align-items-center text-center main-content" style="min-height:80vh;">
     <h2>{{ message }}</h2>
     <img src="{% static image_path %}" alt="Hatching Egg" style="max-width:300px;">
     <p>Your {{ egg.species_name }} is hatching!</p>

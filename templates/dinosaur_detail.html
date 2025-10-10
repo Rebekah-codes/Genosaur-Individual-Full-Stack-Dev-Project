@@ -3,7 +3,7 @@
 
 {% block content %}
 {% if messages %}
-  <div class="container mt-3">
+  <div class="container mt-3 main-content">
     {% for message in messages %}
       <div class="alert alert-{{ message.tags }} text-center" role="alert">
         {{ message }}
@@ -18,7 +18,7 @@
 <div class="alert alert-danger text-center">Dinosaur not found or an error occurred.</div>
 {% endif %}
 
-<div class="container mt-4" style="max-width: 700px;">
+<div class="container mt-4 main-content" style="max-width: 700px;">
   <div class="row justify-content-center">
     <div class="col-12 mb-4">
       <div class="card shadow-sm text-center" style="background-color:#F5E6C8; color:#6B4F23; border-radius:16px;">
