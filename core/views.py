@@ -575,29 +575,34 @@ def perform_action(request, dino_id):
             action_type=action_type,
             outcome=outcome
         )
-        # Unlock trait if dinosaur is juvenile or adult, at specific levels, max 5 traits, random trait
+        # Unlock trait only at levels 2, 26, 51, 76, 99, and only once per level
         trait_levels = [2, 26, 51, 76, 99]
+        # Check if a trait for this level has already been unlocked
         if dino.stage in ["juvenile", "adult"] and dino.level in trait_levels and dino.traits.count() < 5:
-            import random
-            all_traits = list(Trait.objects.exclude(pk__in=dino.traits.values_list('pk', flat=True)))
-            if all_traits:
-                trait = random.choice(all_traits)
-                dino.traits.add(trait)
-                dino.save()
-                RaiseAction.objects.create(
-                    dinosaur=dino,
-                    action_type="train",
-                    outcome=f"{dino.name} unlocked a new trait: {trait.name}!"
-                )
-                messages.success(request, f"{dino.name} unlocked a new trait: {trait.name}!")
-                # Redirect with trait info for modal
-                from django.urls import reverse
-                from django.utils.http import urlencode
-                params = urlencode({
-                    'trait_unlocked': 1,
-                    'trait_name': trait.name,
-                    'trait_description': trait.description
-                })
-                url = reverse("dinosaur_detail", args=[dino.id]) + f"?{params}"
-                return redirect(url)
+            # Check if a RaiseAction for trait unlock at this level already exists
+            trait_action_exists = RaiseAction.objects.filter(dinosaur=dino, action_type="trait_unlock", outcome__icontains=f"level {dino.level}").exists()
+            if not trait_action_exists:
+                import random
+                all_traits = list(Trait.objects.exclude(pk__in=dino.traits.values_list('pk', flat=True)))
+                if all_traits:
+                    trait = random.choice(all_traits)
+                    dino.traits.add(trait)
+                    dino.save()
+                    outcome_text = f"{dino.name} unlocked a new trait: {trait.name}! (level {dino.level})"
+                    RaiseAction.objects.create(
+                        dinosaur=dino,
+                        action_type="trait_unlock",
+                        outcome=outcome_text
+                    )
+                    messages.success(request, f"{dino.name} unlocked a new trait: {trait.name}!")
+                    # Redirect with trait info for modal
+                    from django.urls import reverse
+                    from django.utils.http import urlencode
+                    params = urlencode({
+                        'trait_unlocked': 1,
+                        'trait_name': trait.name,
+                        'trait_description': trait.description
+                    })
+                    url = reverse("dinosaur_detail", args=[dino.id]) + f"?{params}"
+                    return redirect(url)
         return redirect("dinosaur_detail", dino_id=dino.id)
