@@ -172,16 +172,16 @@ def your_dinosaurs(request):
         # Treat any non-adult stage as 'juvenile' for image purposes
         if dino.stage == 'adult':
             if is_green_egg:
-                dino.image_path = "images/adult dinos/green_rex_adult.png"
+                dino.image_path = "images/adult_dinos/green_rex_adult.png"
                 print(f"DEBUG: {dino.name} assigned adult GREEN image")
             elif is_orange_egg:
-                dino.image_path = "images/adult dinos/orange_trike_adult.png"
+                dino.image_path = "images/adult_dinos/orange_trike_adult.png"
                 print(f"DEBUG: {dino.name} assigned adult ORANGE image")
             elif is_blue_egg:
-                dino.image_path = "images/adult dinos/blue_spino_adult.png"
+                dino.image_path = "images/adult_dinos/blue_spino_adult.png"
                 print(f"DEBUG: {dino.name} assigned adult BLUE image")
             else:
-                dino.image_path = "images/adult dinos/green_rex_adult.png"
+                dino.image_path = "images/adult_dinos/green_rex_adult.png"
                 print(f"DEBUG: {dino.name} assigned adult DEFAULT image")
         else:
             if is_green_egg:
@@ -419,13 +419,13 @@ def dinosaur_detail(request, dino_id):
         is_blue_egg = 'blue egg' in species
         if dino.stage == 'adult':
             if is_green_egg:
-                dino.image_path = "images/adult dinos/green_rex_adult.png"
+                dino.image_path = "images/adult_dinos/green_rex_adult.png"
             elif is_orange_egg:
-                dino.image_path = "images/adult dinos/orange_trike_adult.png"
+                dino.image_path = "images/adult_dinos/orange_trike_adult.png"
             elif is_blue_egg:
-                dino.image_path = "images/adult dinos/blue_spino_adult.png"
+                dino.image_path = "images/adult_dinos/blue_spino_adult.png"
             else:
-                dino.image_path = "images/adult dinos/green_rex_adult.png"
+                dino.image_path = "images/adult_dinos/green_rex_adult.png"
         else:
             if is_green_egg:
                 dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
@@ -517,13 +517,13 @@ def perform_action(request, dino_id):
             is_blue_egg = 'blue egg' in species
             if dino.stage == 'adult':
                 if is_green_egg:
-                    dino.image_path = "images/adult dinos/green_rex_adult.png"
+                    dino.image_path = "images/adult_dinos/green_rex_adult.png"
                 elif is_orange_egg:
-                    dino.image_path = "images/adult dinos/orange_trike_adult.png"
+                    dino.image_path = "images/adult_dinos/orange_trike_adult.png"
                 elif is_blue_egg:
-                    dino.image_path = "images/adult dinos/blue_spino_adult.png"
+                    dino.image_path = "images/adult_dinos/blue_spino_adult.png"
                 else:
-                    dino.image_path = "images/adult dinos/green_rex_adult.png"
+                    dino.image_path = "images/adult_dinos/green_rex_adult.png"
             else:
                 if is_green_egg:
                     dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"

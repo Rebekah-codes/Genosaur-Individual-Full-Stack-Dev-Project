@@ -89,7 +89,7 @@ class Dinosaur(models.Model):
                 'blue': 'blue_spino_adult.png',
                 'orange': 'orange_trike_adult.png',
             }
-            return f"images/adult dinos/{image_map.get(color, 'green_rex_adult.png')}"
+            return f"images/adult_dinos/{image_map.get(color, 'green_rex_adult.png')}"
         else:
             return "images/juvenile_dinos/green_rex_juvie.png"
 
