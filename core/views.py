@@ -575,11 +575,10 @@ def perform_action(request, dino_id):
             action_type=action_type,
             outcome=outcome
         )
-        # Unlock trait only at levels 2, 26, 51, 76, 99, and only once per level
+        # Only unlock trait when level matches trait_levels and not just on evolution
         trait_levels = [2, 26, 51, 76, 99]
-        # Check if a trait for this level has already been unlocked
-        if dino.stage in ["juvenile", "adult"] and dino.level in trait_levels and dino.traits.count() < 5:
-            # Check if a RaiseAction for trait unlock at this level already exists
+        # Only check for trait unlock if action_type is "train" (level up), not "feed" (evolution)
+        if action_type == "train" and dino.stage in ["juvenile", "adult"] and dino.level in trait_levels and dino.traits.count() < 5:
             trait_action_exists = RaiseAction.objects.filter(dinosaur=dino, action_type="trait_unlock", outcome__icontains=f"level {dino.level}").exists()
             if not trait_action_exists:
                 import random
