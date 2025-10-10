@@ -35,17 +35,9 @@
 </div>
   {% if juvenile_dinos %}
   <div class="container mt-5">
-    <h2 class="text-center" style="color:#4B3A1A;">Your Juvenile Dinosaurs</h2>
-    <div class="row justify-content-center">
-      {% for dino in juvenile_dinos %}
-        <div class="col-md-4 mb-4">
-          <div class="card shadow-sm p-3 text-center" style="background-color:#F5E6C8;">
-            <img src="{% static dino.image_path %}" alt="{{ dino.name }}" style="max-width:200px;">
-            <h4 class="mt-2">{{ dino.name }}</h4>
-            <p>Species: {{ dino.species_name }}</p>
-          </div>
-        </div>
-      {% endfor %}
+    <div class="alert alert-success text-center" style="font-size:1.2rem;">
+      Your egg has hatched! <br>
+      <strong>Go to <a href="{% url 'your_dinosaurs' %}">Your Dinosaurs</a> to check on your juvenile dinosaur.</strong>
     </div>
   </div>
   {% endif %}
