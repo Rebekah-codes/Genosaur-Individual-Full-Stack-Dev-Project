@@ -5,7 +5,7 @@
     <h2 class="text-center mb-4">Choose Your First Egg</h2>
     <div class="row justify-content-center">
         <div class="col-md-3 text-center">
-            <img src="{% static 'images/eggs/green_egg.png' %}" alt="Green Egg" class="img-fluid mb-2" style="max-height:150px;">
+            <img src="{% static 'images/eggs/green_egg.webp' %}" alt="Green Egg" class="img-fluid mb-2" style="max-height:150px;">
             <form method="post" action="{% url 'claim_egg' %}">
                 {% csrf_token %}
                 <input type="hidden" name="egg_color" value="green">
@@ -13,7 +13,7 @@
             </form>
         </div>
         <div class="col-md-3 text-center">
-            <img src="{% static 'images/eggs/orange_egg.png' %}" alt="Orange Egg" class="img-fluid mb-2" style="max-height:150px;">
+            <img src="{% static 'images/eggs/orange_egg.webp' %}" alt="Orange Egg" class="img-fluid mb-2" style="max-height:150px;">
             <form method="post" action="{% url 'claim_egg' %}">
                 {% csrf_token %}
                 <input type="hidden" name="egg_color" value="orange">
@@ -21,7 +21,7 @@
             </form>
         </div>
         <div class="col-md-3 text-center">
-            <img src="{% static 'images/eggs/blue_egg.png' %}" alt="Blue Egg" class="img-fluid mb-2" style="max-height:150px;">
+            <img src="{% static 'images/eggs/blue_egg.webp' %}" alt="Blue Egg" class="img-fluid mb-2" style="max-height:150px;">
             <form method="post" action="{% url 'claim_egg' %}">
                 {% csrf_token %}
                 <input type="hidden" name="egg_color" value="blue">

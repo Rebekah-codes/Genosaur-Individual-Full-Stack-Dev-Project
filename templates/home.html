@@ -3,7 +3,7 @@
 
 {% block content %}
 	<div class="text-center mb-4">
-	<img src="{% static 'images/genosaur_logo.png' %}" alt="Genosaur Logo" style="max-width: 600px; width: 100%; height: auto; margin-bottom: 2rem;">
+	<img src="{% static 'images/genosaur_logo.webp' %}" alt="Genosaur Logo" style="max-width: 600px; width: 100%; height: auto; margin-bottom: 2rem;">
 	</div>
 	<h1 class="text-center mb-4">🥚 Your Eggs</h1>
 
@@ -13,7 +13,7 @@
 				<div class="card shadow-sm h-100 text-center card-brown">
 					{% if egg.is_hatched and egg.dinosaur %}
 						<!-- Cracked egg sprite with dino info -->
-						<img src="{% static 'images/egg_cracked.png' %}" 
+						<img src="{% static 'images/egg_cracked.webp' %}" 
 							 class="card-img-top mx-auto d-block mt-3" 
 							 alt="Cracked Egg" 
 							 style="max-width: 150px;">
@@ -30,7 +30,7 @@
 						</div>
 					{% elif egg.is_hatched %}
 						<!-- Cracked egg sprite, but no dino info yet -->
-						<img src="{% static 'images/egg_cracked.png' %}" 
+						<img src="{% static 'images/egg_cracked.webp' %}" 
 							 class="card-img-top mx-auto d-block mt-3" 
 							 alt="Cracked Egg" 
 							 style="max-width: 150px;">
@@ -40,7 +40,7 @@
 						</div>
 					{% else %}
 						<!-- Unhatched egg sprite -->
-						<img src="{% static 'images/egg.png' %}" 
+						<img src="{% static 'images/egg.webp' %}" 
 							 class="card-img-top mx-auto d-block mt-3" 
 							 alt="Egg sprite" 
 							 style="max-width: 150px;">
