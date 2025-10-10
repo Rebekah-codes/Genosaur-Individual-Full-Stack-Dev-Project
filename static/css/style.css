@@ -1,3 +1,7 @@
+/* Main content text color for all pages (excluding navbar and footer) */
+.main-content, .main-content * {
+  color: #4B3A1A !important;
+}
 /* Responsive improvements for mobile and tablet */
 @media (max-width: 991px) {
   .container, .container-fluid {
