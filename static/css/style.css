@@ -1,14 +1,14 @@
 .logo-img {
-  width: 200px !important;
-  height: 200px !important;
-  max-width: 200px !important;
+  width: 400px !important;
+  height: 400px !important;
+  max-width: 400px !important;
 }
 
 @media (max-width: 576px) {
   .logo-img {
-    width: 96px !important;
-    height: 96px !important;
-    max-width: 96px !important;
+    width: 192px !important;
+    height: 192px !important;
+    max-width: 192px !important;
   }
 }
 @font-face {
