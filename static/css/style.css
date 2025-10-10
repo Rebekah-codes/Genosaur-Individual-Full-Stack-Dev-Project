@@ -1,3 +1,9 @@
+/* Absolutely force .btn-danger and .btn-brown text to white, overriding everything */
+.btn-danger, .btn-danger *, .btn-danger:active, .btn-danger:focus, .btn-danger:hover, .btn-danger:visited, .btn-danger:link,
+.btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover, .btn-brown:visited, .btn-brown:link {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
 /* Highest specificity: ensure .btn-danger and .btn-brown and all children always have white text */
 .btn-danger, .btn-danger *, .btn-danger:active, .btn-danger:focus, .btn-danger:hover, .btn-danger:visited, .btn-danger:link,
 .btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover, .btn-brown:visited, .btn-brown:link {
