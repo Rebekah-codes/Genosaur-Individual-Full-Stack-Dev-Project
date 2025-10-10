@@ -12,7 +12,7 @@
 				{% if message %}
 					<div class="alert alert-info mt-3">{{ message }}</div>
 				{% endif %}
-				<form method="POST" action="">
+				<form method="POST" action=".">
 					{% csrf_token %}
 					<button type="submit" class="btn btn-success btn-lg mt-4" {% if not can_search %}disabled{% endif %}>
 						{% if not can_search %}Search Limit Reached{% else %}Search the Wilderness{% endif %}
