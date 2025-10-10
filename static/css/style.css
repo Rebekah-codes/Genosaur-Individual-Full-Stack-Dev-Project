@@ -1,3 +1,13 @@
+/* Ensure .btn-danger and .btn-brown always have white text in all states */
+.btn-danger,
+.btn-danger *,
+.btn-danger:active,
+.btn-danger:focus,
+.btn-danger:hover,
+.btn-danger:visited,
+.btn-danger:link {
+  color: #fff !important;
+}
 /* Ensure footer text is white, including icons and links */
 .footer, .footer *, .footer a, .footer i, .footer span {
   color: #fff !important;
