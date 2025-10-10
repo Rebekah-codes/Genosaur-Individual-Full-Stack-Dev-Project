@@ -1,3 +1,8 @@
+/* Ensure pencil icon in name edit button stays orange, not white */
+.btn-link .bi-pencil {
+  color: orange !important;
+  fill: orange !important;
+}
 /* Force Bootstrap pencil icon to orange for name edit */
 .bi-pencil {
   color: orange !important;
