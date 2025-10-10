@@ -185,16 +185,16 @@ def your_dinosaurs(request):
                 print(f"DEBUG: {dino.name} assigned adult DEFAULT image")
         else:
             if is_green_egg:
-                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
                 print(f"DEBUG: {dino.name} assigned juvenile GREEN image")
             elif is_orange_egg:
-                dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
+                dino.image_path = "images/juvenile_dinos/orange_trike_juvie.png"
                 print(f"DEBUG: {dino.name} assigned juvenile ORANGE image")
             elif is_blue_egg:
-                dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
+                dino.image_path = "images/juvenile_dinos/blue_spino_juvie.png"
                 print(f"DEBUG: {dino.name} assigned juvenile BLUE image")
             else:
-                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
                 print(f"DEBUG: {dino.name} assigned juvenile DEFAULT image")
         print(f"DEBUG: {dino.name} FINAL image_path='{dino.image_path}' for RAW species_name='{raw_species}' PROCESSED species='{species}'")
     return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
@@ -215,7 +215,7 @@ def dashboard(request):
                 'blue': 'blue_spino_juvie.png',
                 'orange': 'orange_trike_juvie.png',
             }
-            dino.image_path = f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
+            dino.image_path = f"images/juvenile_dinos/{image_map.get(color, 'green_rex_juvie.png')}"
         return render(request, 'dashboard.html', {'has_egg': has_egg, 'juvenile_dinos': juvenile_dinos, 'has_dino': has_dino})
     except Exception as e:
         logging.error(f"Dashboard error: {e}")
@@ -428,13 +428,13 @@ def dinosaur_detail(request, dino_id):
                 dino.image_path = "images/adult dinos/green_rex_adult.png"
         else:
             if is_green_egg:
-                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
             elif is_orange_egg:
-                dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
+                dino.image_path = "images/juvenile_dinos/orange_trike_juvie.png"
             elif is_blue_egg:
-                dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
+                dino.image_path = "images/juvenile_dinos/blue_spino_juvie.png"
             else:
-                dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
         return render(request, 'dinosaur_detail.html', {
             'dino': dino,
             'actions': actions,
@@ -526,13 +526,13 @@ def perform_action(request, dino_id):
                     dino.image_path = "images/adult dinos/green_rex_adult.png"
             else:
                 if is_green_egg:
-                    dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                    dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
                 elif is_orange_egg:
-                    dino.image_path = "images/juvenile dinos/orange_trike_juvie.png"
+                    dino.image_path = "images/juvenile_dinos/orange_trike_juvie.png"
                 elif is_blue_egg:
-                    dino.image_path = "images/juvenile dinos/blue_spino_juvie.png"
+                    dino.image_path = "images/juvenile_dinos/blue_spino_juvie.png"
                 else:
-                    dino.image_path = "images/juvenile dinos/green_rex_juvie.png"
+                    dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
         elif action_type == "play":
             outcome = f"{dino.name} had fun playing!"
             dino.mood = "playful"

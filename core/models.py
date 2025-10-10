@@ -82,7 +82,7 @@ class Dinosaur(models.Model):
                 'blue': 'blue_spino_juvie.png',
                 'orange': 'orange_trike_juvie.png',
             }
-            return f"images/juvenile dinos/{image_map.get(color, 'green_rex_juvie.png')}"
+            return f"images/juvenile_dinos/{image_map.get(color, 'green_rex_juvie.png')}"
         elif self.stage == "adult":
             image_map = {
                 'green': 'green_rex_adult.png',
@@ -91,7 +91,7 @@ class Dinosaur(models.Model):
             }
             return f"images/adult dinos/{image_map.get(color, 'green_rex_adult.png')}"
         else:
-            return "images/juvenile dinos/green_rex_juvie.png"
+            return "images/juvenile_dinos/green_rex_juvie.png"
 
     def level_up(self, amount=1):
         """Increase level but cap at 100."""
