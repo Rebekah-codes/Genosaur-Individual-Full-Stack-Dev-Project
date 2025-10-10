@@ -1,55 +1,20 @@
-/* Absolutely force .btn-success text to white, overriding everything */
-.btn-success, .btn-success *, .btn-success:active, .btn-success:focus, .btn-success:hover, .btn-success:visited, .btn-success:link {
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-}
-/* Absolutely force .btn-danger and .btn-brown text to white, overriding everything */
+/* Absolutely force all main buttons and footer to have white text in all states, highest specificity */
+.btn-success, .btn-success *, .btn-success:active, .btn-success:focus, .btn-success:hover, .btn-success:visited, .btn-success:link,
 .btn-danger, .btn-danger *, .btn-danger:active, .btn-danger:focus, .btn-danger:hover, .btn-danger:visited, .btn-danger:link,
-.btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover, .btn-brown:visited, .btn-brown:link {
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-}
-/* Highest specificity: ensure .btn-danger and .btn-brown and all children always have white text */
-.btn-danger, .btn-danger *, .btn-danger:active, .btn-danger:focus, .btn-danger:hover, .btn-danger:visited, .btn-danger:link,
-.btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover, .btn-brown:visited, .btn-brown:link {
-  color: #fff !important;
-}
-/* Ensure .btn-danger and .btn-brown always have white text in all states */
-.btn-danger,
-.btn-danger *,
-.btn-danger:active,
-.btn-danger:focus,
-.btn-danger:hover,
-.btn-danger:visited,
-.btn-danger:link {
-  color: #fff !important;
-}
-/* Ensure footer text is white, including icons and links */
+.btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover, .btn-brown:visited, .btn-brown:link,
+button, .btn, .btn-warning, .btn-primary, .btn-secondary, .btn-info, .btn-dark,
+button *, .btn *, .btn-warning *, .btn-primary *, .btn-secondary *, .btn-info *, .btn-dark *,
 .footer, .footer *, .footer a, .footer i, .footer span {
   color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
 }
-.btn-brown,
-.btn-brown *,
-.btn-brown:active,
-.btn-brown:focus,
-.btn-brown:hover,
-.btn-brown:visited,
-.btn-brown:link {
-  color: #fff !important;
-}
-/* Ensure .btn-brown has white text and correct background */
+/* Ensure .btn-brown has correct background and border */
 .btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover {
   background-color: #A6895B !important;
-  color: #fff !important;
   border: 1px solid #A6895B !important;
 }
-/* Force all buttons to have white text, including all descendants */
-button, .btn, .btn-brown, .btn-success, .btn-danger, .btn-warning, .btn-primary, .btn-secondary, .btn-info, .btn-dark,
-button *, .btn *, .btn-brown *, .btn-success *, .btn-danger *, .btn-warning *, .btn-primary *, .btn-secondary *, .btn-info *, .btn-dark * {
-  color: #fff !important;
-}
-/* Main content text color for all pages (excluding navbar and footer) */
-.main-content, .main-content * {
+/* Main content and card brown text color for all pages (excluding navbar and footer) */
+.main-content, .main-content *, .card-brown {
   color: #4B3A1A !important;
 }
 /* Responsive improvements for mobile and tablet */
