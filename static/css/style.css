@@ -1,3 +1,7 @@
+/* Ensure footer text is white */
+.footer, .footer *, .footer a {
+  color: #fff !important;
+}
 .btn-brown,
 .btn-brown *,
 .btn-brown:active,
