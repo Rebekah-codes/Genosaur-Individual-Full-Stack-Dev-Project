@@ -462,7 +462,7 @@ def hatching_page(request, egg_id):
     egg = get_object_or_404(Egg, id=egg_id, owner=request.user)
     # Determine image path based on egg color/species
     color = egg.species_name.split()[0].lower()  # e.g., 'green', 'blue', 'orange'
-    image_path = f"images/hatching egg/{color}_hatching_egg.png"
+    image_path = f"images/hatching_egg/{color}_hatching_egg.png"
     message = "Congratulations! Your egg is hatching!"
     # Delete the egg immediately after hatching page is shown
     egg.delete()
