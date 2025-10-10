@@ -1,3 +1,8 @@
+/* Highest specificity: ensure .btn-danger and .btn-brown and all children always have white text */
+.btn-danger, .btn-danger *, .btn-danger:active, .btn-danger:focus, .btn-danger:hover, .btn-danger:visited, .btn-danger:link,
+.btn-brown, .btn-brown *, .btn-brown:active, .btn-brown:focus, .btn-brown:hover, .btn-brown:visited, .btn-brown:link {
+  color: #fff !important;
+}
 /* Ensure .btn-danger and .btn-brown always have white text in all states */
 .btn-danger,
 .btn-danger *,
