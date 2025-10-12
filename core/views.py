@@ -1,19 +1,4 @@
-@login_required
-def decline_trade(request, trade_id):
-    if request.method == 'POST':
-        trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
-        trade.status = 'declined'
-        trade.save()
-        messages.success(request, 'Trade offer declined.')
-    return redirect('trade_center')
-from django.contrib.auth.decorators import login_required
-@login_required
-def cancel_trade(request, trade_id):
-    trade = get_object_or_404(Trade, id=trade_id, sender=request.user, status='pending')
-    trade.status = 'declined'
-    trade.save()
-    messages.success(request, 'Trade offer cancelled.')
-    return redirect('trade_center')
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login as auth_login
@@ -25,6 +10,23 @@ from .models import Trade
 from django.db.models import Q
 from django import forms
 from django.core.exceptions import ValidationError
+
+@login_required
+def decline_trade(request, trade_id):
+    if request.method == 'POST':
+        trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
+        trade.status = 'declined'
+        trade.save()
+        messages.success(request, 'Trade offer declined.')
+    return redirect('trade_center')
+
+@login_required
+def cancel_trade(request, trade_id):
+    trade = get_object_or_404(Trade, id=trade_id, sender=request.user, status='pending')
+    trade.status = 'declined'
+    trade.save()
+    messages.success(request, 'Trade offer cancelled.')
+    return redirect('trade_center')
 
 class TradeForm(forms.ModelForm):
 
@@ -60,6 +62,18 @@ class TradeForm(forms.ModelForm):
             raise ValidationError('You must offer exactly one item (egg or dinosaur).')
         if sum([item is not None for item in receiver_items]) != 1:
             raise ValidationError('You must request exactly one item (egg or dinosaur) in return.')
+        from django.contrib.auth.decorators import login_required
+        from django.shortcuts import render, redirect, get_object_or_404
+        from django.contrib.auth import logout as auth_logout, login as auth_login
+        from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+        from django.utils.crypto import get_random_string
+        from django.contrib import messages  # for toast notifications
+        from django.views.decorators.csrf import csrf_protect
+        from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
+        from django.db.models import Q
+        from django import forms
+        from django.core.exceptions import ValidationError
+        import logging
         return cleaned_data
 
 @login_required
