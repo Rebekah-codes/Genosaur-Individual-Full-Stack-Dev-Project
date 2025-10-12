@@ -19,4 +19,5 @@ urlpatterns = [
     path('your-dinosaurs/', views.your_dinosaurs, name='your_dinosaurs'),
     path('trade-center/', views.trade_center, name='trade_center'),
     path('trade-center/accept/<int:trade_id>/', views.accept_trade, name='accept_trade'),
+    path('trade-center/decline/<int:trade_id>/', views.decline_trade, name='decline_trade'),
 ]
