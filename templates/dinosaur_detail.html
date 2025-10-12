@@ -18,6 +18,24 @@
 <div class="alert alert-danger text-center">Dinosaur not found or an error occurred.</div>
 {% endif %}
 <div class="row justify-content-center" style="max-width: 700px; margin: 0 auto;">
+  {% if request.GET.evolved %}
+  <div class="modal fade show" id="evolutionModal" tabindex="-1" aria-labelledby="evolutionModalLabel" aria-modal="true" style="display:block; background:rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="evolutionModalLabel">Evolution!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="document.getElementById('evolutionModal').style.display='none';"></button>
+        </div>
+        <div class="modal-body">
+          <strong>{{ dino.name }}</strong> has evolved into an <strong>Adult</strong>!
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal" onclick="document.getElementById('evolutionModal').style.display='none';">Continue</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
   <div class="col-12 mb-4">
     <div class="card shadow-sm text-center" style="background-color:#F5E6C8; color:#6B4F23; border-radius:16px;">
       <div class="card-body main-content">
@@ -73,8 +91,7 @@
       <h4 class="mt-4">Progression</h4>
       <p>Feeds until evolution ({{ feed_progress }}/{{ feeds_needed }})</p>
       <div class="progress mb-3">
-        <div class="progress-bar 
-          {% if feed_complete %}bg-success pulse{% elif feed_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
+        <div class="progress-bar {% if feed_complete %}bg-success pulse{% elif feed_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
           role="progressbar"
           style="width: {{ feed_percent }}%"
           aria-valuenow="{{ feed_progress }}" aria-valuemin="0" aria-valuemax="{{ feeds_needed }}">
@@ -83,8 +100,7 @@
       </div>
       <p>Actions until trait unlock ({{ action_progress }}/{{ actions_needed }})</p>
       <div class="progress mb-4">
-        <div class="progress-bar 
-          {% if action_complete %}bg-success pulse{% elif action_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
+        <div class="progress-bar {% if action_complete %}bg-success pulse{% elif action_percent > 66 %}bg-warning{% else %}bg-info{% endif %}"
           role="progressbar"
           style="width: {{ action_percent }}%"
           aria-valuenow="{{ action_progress }}" aria-valuemin="0" aria-valuemax="{{ actions_needed }}">
