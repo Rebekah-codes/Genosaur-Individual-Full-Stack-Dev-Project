@@ -14,6 +14,13 @@ def cancel_trade(request, trade_id):
     trade.save()
     messages.success(request, 'Trade offer cancelled.')
     return redirect('trade_center')
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout as auth_logout, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.utils.crypto import get_random_string
+from django.contrib import messages  # for toast notifications
+from django.views.decorators.csrf import csrf_protect
 from .models import Trade
 from django.db.models import Q
 from django import forms
@@ -142,8 +149,6 @@ def wilderness(request):
             message = f"You found a {found_egg}!"
         else:
             message = random.choice(messages_list)
-    elif request.method == "POST" and not can_search:
-        message = "You have reached your search limit for today. Please come back in 24 hours."
     print("DEBUG wilderness view:", {
         "can_search": can_search,
         "message": message,
@@ -152,7 +157,6 @@ def wilderness(request):
         "user": user.username if user.is_authenticated else None
     })
     return render(request, "wilderness.html", {"can_search": can_search, "message": message, "found_egg": found_egg})
-
 def create_dinosaur_from_egg(egg):
     if not hasattr(egg, 'dinosaur') or egg.dinosaur is None:
         dino_name = egg.name if egg.name else f"{egg.species_name}-{get_random_string(4)}"
