@@ -1,9 +1,10 @@
 @login_required
 def decline_trade(request, trade_id):
-    trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
-    trade.status = 'declined'
-    trade.save()
-    messages.success(request, 'Trade offer declined.')
+    if request.method == 'POST':
+        trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
+        trade.status = 'declined'
+        trade.save()
+        messages.success(request, 'Trade offer declined.')
     return redirect('trade_center')
 from django.contrib.auth.decorators import login_required
 @login_required
