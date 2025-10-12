@@ -460,13 +460,14 @@ from django.conf import settings
 @login_required
 def hatching_page(request, egg_id):
     egg = get_object_or_404(Egg, id=egg_id, owner=request.user)
-    # Determine image path based on egg color/species
     color = egg.species_name.split()[0].lower()  # e.g., 'green', 'blue', 'orange'
     image_path = f"images/hatching_egg/{color}_hatching_egg.png"
     message = "Congratulations! Your egg is hatching!"
+    # Save egg name or fallback to species_name for template
+    egg_name = egg.name if egg.name else egg.species_name
     # Delete the egg immediately after hatching page is shown
     egg.delete()
-    return render(request, "hatching_page.html", {"egg": None, "image_path": image_path, "message": message})
+    return render(request, "hatching_page.html", {"egg_name": egg_name, "image_path": image_path, "message": message})
     feed_progress = min(feed_actions, feeds_needed)
     action_progress = min(total_actions, actions_needed)
     # Calculate percent for progress bars
