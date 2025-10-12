@@ -1,3 +1,17 @@
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout as auth_logout, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.utils.crypto import get_random_string
+from django.contrib import messages  # for toast notifications
+from django.views.decorators.csrf import csrf_protect
+from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
+from django.db.models import Q
+from django import forms
+from django.core.exceptions import ValidationError
+from django.conf import settings
+import logging
+import random
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -36,7 +50,6 @@ class TradeForm(forms.ModelForm):
         if user:
             self.fields['sender_egg'].queryset = user.eggs.all()
             self.fields['sender_dinosaur'].queryset = user.dinosaurs.all()
-        # Dynamically filter receiver's items if receiver is selected
         receiver = None
         if self.data.get('receiver'):
             from django.contrib.auth import get_user_model
@@ -78,7 +91,6 @@ class TradeForm(forms.ModelForm):
 
 @login_required
 def trade_center(request):
-    # Show all pending trades involving the user
     trades = Trade.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-created_at')
     form = TradeForm(user=request.user)
     if request.method == 'POST':
@@ -95,7 +107,6 @@ def trade_center(request):
 @login_required
 def accept_trade(request, trade_id):
     trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
-    # Swap ownership of items
     if trade.sender_egg:
         trade.sender_egg.owner = trade.receiver
         trade.sender_egg.save()
@@ -118,7 +129,24 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.utils.crypto import get_random_string
 from django.contrib import messages  # for toast notifications
 from django.views.decorators.csrf import csrf_protect
-from .models import Egg, Dinosaur, RaiseAction, Trait
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['sender_egg'].queryset = user.eggs.all()
+            self.fields['sender_dinosaur'].queryset = user.dinosaurs.all()
+        receiver = None
+        if self.data.get('receiver'):
+            from django.contrib.auth import get_user_model
+            User = get_user_model()
+            try:
+                receiver = User.objects.get(pk=self.data.get('receiver'))
+            except (User.DoesNotExist, ValueError, TypeError):
+                receiver = None
+        elif self.initial.get('receiver'):
+            receiver = self.initial.get('receiver')
+        if receiver:
+            self.fields['receiver_egg'].queryset = receiver.eggs.all()
+            self.fields['receiver_dinosaur'].queryset = receiver.dinosaurs.all()
 import logging
 from django.contrib.auth.decorators import login_required
 
@@ -136,9 +164,7 @@ def wilderness(request):
     ]
     user = request.user
     now = timezone.now()
-    # Store wilderness search timestamps in session
     searches = request.session.get('wilderness_searches', [])
-    # Remove searches older than 24 hours
     searches = [ts for ts in searches if timezone.datetime.fromisoformat(ts) > now - timedelta(hours=24)]
     can_search = len(searches) < 5
     found_egg = None
@@ -195,7 +221,6 @@ def your_dinosaurs(request):
         is_orange_egg = 'orange egg' in species
         is_blue_egg = 'blue egg' in species
         print(f"DEBUG: {dino.name} RAW species_name='{raw_species}' PROCESSED species='{species}' is_green_egg={is_green_egg} is_orange_egg={is_orange_egg} is_blue_egg={is_blue_egg} stage='{dino.stage}'")
-        # Treat any non-adult stage as 'juvenile' for image purposes
         if dino.stage == 'adult':
             if is_green_egg:
                 dino.image_path = "images/adult_dinos/green_rex_adult.png"
@@ -253,7 +278,6 @@ from django.views.decorators.csrf import csrf_protect
 def claim_egg(request):
     if request.method == 'POST':
         color = request.POST.get('egg_color')
-        # Map color to species/element/rarity
         egg_data = {
             'green': {'species_name': 'Green Egg', 'element_type': 'Earth', 'rarity': 'Common'},
             'orange': {'species_name': 'Orange Egg', 'element_type': 'Fire', 'rarity': 'Common'},
@@ -286,7 +310,6 @@ def egg_detail(request, egg_id):
     message = None
     if request.method == 'POST':
         if 'release_egg' in request.POST:
-            # Delete associated dinosaur if exists
             dino = getattr(egg, 'dinosaur', None)
             if dino:
                 dino.delete()
@@ -337,7 +360,6 @@ def egg_detail(request, egg_id):
                 else:
                     message = 'You sang to the egg. No change.'
     elif egg.is_hatched:
-        # Ensure dinosaur exists for already hatched eggs
         create_dinosaur_from_egg(egg)
         message = 'Your egg has already hatched!'
     return render(request, 'egg_detail.html', {'egg': egg, 'message': message})
@@ -394,7 +416,6 @@ def hatch_egg(request, egg_id):
         egg.is_hatched = True
         egg.save()
         create_dinosaur_from_egg(egg)
-    # Always redirect to hatching page
     return redirect('hatching_page', egg_id=egg_id)
 
 @login_required
@@ -402,7 +423,6 @@ def dinosaur_detail(request, dino_id):
     import logging
     try:
         dino = get_object_or_404(Dinosaur, id=dino_id)
-        # Ensure orphaned egg is deleted if dinosaur exists and is not an egg
         if dino.egg:
             try:
                 dino.egg.delete()
@@ -431,17 +451,14 @@ def dinosaur_detail(request, dino_id):
         actions_needed = 5
         feed_progress = min(feed_actions, feeds_needed)
         action_progress = min(total_actions, actions_needed)
-        # Calculate percent for progress bars
         feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
         action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
         feed_complete = feed_progress >= feeds_needed
         action_complete = action_progress >= actions_needed
         level_percent = int((dino.level / 100) * 100)
-        # Evolve to adult on third feed
         if feed_complete and dino.stage != 'adult':
             dino.stage = 'adult'
             dino.save()
-        # Image mapping logic (same as inventory)
         raw_species = dino.species_name
         species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
         is_green_egg = 'green egg' in species
@@ -493,14 +510,11 @@ def hatching_page(request, egg_id):
     color = egg.species_name.split()[0].lower()  # e.g., 'green', 'blue', 'orange'
     image_path = f"images/hatching_egg/{color}_hatching_egg.png"
     message = "Congratulations! Your egg is hatching!"
-    # Save egg name or fallback to species_name for template
     egg_name = egg.name if egg.name else egg.species_name
-    # Delete the egg immediately after hatching page is shown
     egg.delete()
     return render(request, "hatching_page.html", {"egg_name": egg_name, "image_path": image_path, "message": message})
     feed_progress = min(feed_actions, feeds_needed)
     action_progress = min(total_actions, actions_needed)
-    # Calculate percent for progress bars
     feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
     action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
     feed_complete = feed_progress >= feeds_needed
@@ -531,16 +545,13 @@ def perform_action(request, dino_id):
         if action_type == "feed":
             outcome = f"{dino.name} enjoyed a tasty meal!"
             dino.mood = "happy"
-            # If dino is juvenile and has enough feed actions, evolve to adult
             feeds_needed = 3
             evolved = False
-            # Evolve if feed_actions >= feeds_needed and not already adult
             if dino.stage != "adult" and feed_actions >= feeds_needed:
                 dino.stage = "adult"
                 outcome += f" 🦉 {dino.name} has evolved into an Adult!"
                 messages.success(request, f"{dino.name} evolved into an Adult!")
                 evolved = True
-            # Apply image mapping logic after possible evolution
             raw_species = dino.species_name
             species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
             is_green_egg = 'green egg' in species
@@ -574,7 +585,6 @@ def perform_action(request, dino_id):
             if dino.level == 100:
                 messages.success(request, f"{dino.name} reached the max level 100!")
         elif action_type == "wilderness_search" and dino.stage == "juvenile":
-            # If twigs or leaves is already 5, always return 'didn't find anything'
             if dino.twigs >= 5 or dino.leaves >= 5:
                 outcome = f"{dino.name} searched the wilderness but didn't find anything (max resources reached)."
                 dino.mood = "hungry"
@@ -595,9 +605,22 @@ def perform_action(request, dino_id):
             action_type=action_type,
             outcome=outcome
         )
-        # Only unlock trait when level matches trait_levels and not just on evolution
+        # Add a separate action for evolution if it just happened
+        if action_type == "feed" and evolved:
+            RaiseAction.objects.create(
+                dinosaur=dino,
+                action_type="evolve",
+                outcome=f"{dino.name} has evolved into an Adult!"
+            )
+            from django.urls import reverse
+            url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
+            return redirect(url)
+        # Pass evolution modal flag via GET param
+        if action_type == "feed" and evolved:
+            from django.urls import reverse
+            url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
+            return redirect(url)
         trait_levels = [2, 26, 51, 76, 99]
-        # Only check for trait unlock if action_type is "train" (level up), not "feed" (evolution)
         if action_type == "train" and dino.stage in ["juvenile", "adult"] and dino.level in trait_levels and dino.traits.count() < 5:
             trait_action_exists = RaiseAction.objects.filter(dinosaur=dino, action_type="trait_unlock", outcome__icontains=f"level {dino.level}").exists()
             if not trait_action_exists:
@@ -614,7 +637,6 @@ def perform_action(request, dino_id):
                         outcome=outcome_text
                     )
                     messages.success(request, f"{dino.name} unlocked a new trait: {trait.name}!")
-                    # Redirect with trait info for modal
                     from django.urls import reverse
                     from django.utils.http import urlencode
                     params = urlencode({
