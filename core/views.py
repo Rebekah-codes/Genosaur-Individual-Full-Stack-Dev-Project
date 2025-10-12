@@ -124,32 +124,7 @@ def accept_trade(request, trade_id):
     trade.save()
     messages.success(request, 'Trade accepted and items swapped!')
     return redirect('trade_center')
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import logout as auth_logout, login as auth_login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.utils.crypto import get_random_string
-from django.contrib import messages  # for toast notifications
-from django.views.decorators.csrf import csrf_protect
-        user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-        if user:
-            self.fields['sender_egg'].queryset = user.eggs.all()
-            self.fields['sender_dinosaur'].queryset = user.dinosaurs.all()
-        receiver = None
-        if self.data.get('receiver'):
-            from django.contrib.auth import get_user_model
-            User = get_user_model()
-            try:
-                receiver = User.objects.get(pk=self.data.get('receiver'))
-            except (User.DoesNotExist, ValueError, TypeError):
-                receiver = None
-        elif self.initial.get('receiver'):
-            receiver = self.initial.get('receiver')
-        if receiver:
-            self.fields['receiver_egg'].queryset = receiver.eggs.all()
-            self.fields['receiver_dinosaur'].queryset = receiver.dinosaurs.all()
-import logging
-from django.contrib.auth.decorators import login_required
+    # ...existing code...
 
 
 def wilderness(request):
