@@ -437,6 +437,10 @@ def dinosaur_detail(request, dino_id):
         feed_complete = feed_progress >= feeds_needed
         action_complete = action_progress >= actions_needed
         level_percent = int((dino.level / 100) * 100)
+        # Evolve to adult on third feed
+        if feed_complete and dino.stage != 'adult':
+            dino.stage = 'adult'
+            dino.save()
         # Image mapping logic (same as inventory)
         raw_species = dino.species_name
         species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
