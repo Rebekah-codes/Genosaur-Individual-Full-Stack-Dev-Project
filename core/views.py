@@ -63,6 +63,7 @@ class TradeForm(forms.ModelForm):
         if receiver:
             self.fields['receiver_egg'].queryset = receiver.eggs.all()
             self.fields['receiver_dinosaur'].queryset = receiver.dinosaurs.all()
+
     class Meta:
         model = Trade
         fields = ['receiver', 'sender_egg', 'sender_dinosaur', 'receiver_egg', 'receiver_dinosaur']
