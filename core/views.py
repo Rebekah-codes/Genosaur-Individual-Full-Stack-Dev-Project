@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.utils.crypto import get_random_string
-from django.contrib import messages  # for toast notifications
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
 from django.db.models import Q
@@ -18,7 +18,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.utils.crypto import get_random_string
-from django.contrib import messages  # for toast notifications
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 from .models import Trade
 from django.db.models import Q
@@ -81,7 +81,7 @@ class TradeForm(forms.ModelForm):
         from django.contrib.auth import logout as auth_logout, login as auth_login
         from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
         from django.utils.crypto import get_random_string
-        from django.contrib import messages  # for toast notifications
+        from django.contrib import messages
         from django.views.decorators.csrf import csrf_protect
         from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
         from django.db.models import Q
@@ -308,7 +308,7 @@ def egg_detail(request, egg_id):
                 else:
                     message = "Egg name cannot be empty."
             elif 'search_wilderness' in request.POST:
-                found = random.choice(['twig', 'leaf', None, None])  # 50% chance
+                found = random.choice(['twig', 'leaf', None, None])
                 if found == 'twig':
                     if egg.twigs < 5:
                         egg.twigs += 1
@@ -483,7 +483,7 @@ from django.conf import settings
 @login_required
 def hatching_page(request, egg_id):
     egg = get_object_or_404(Egg, id=egg_id, owner=request.user)
-    color = egg.species_name.split()[0].lower()  # e.g., 'green', 'blue', 'orange'
+    color = egg.species_name.split()[0].lower()
     image_path = f"images/hatching_egg/{color}_hatching_egg.png"
     message = "Congratulations! Your egg is hatching!"
     egg_name = egg.name if egg.name else egg.species_name
@@ -518,12 +518,13 @@ def perform_action(request, dino_id):
         total_actions = dino.actions.count()
         feed_actions = dino.actions.filter(action_type="feed").count()
 
+        evolved = False
         if action_type == "feed":
             outcome = f"{dino.name} enjoyed a tasty meal!"
             dino.mood = "happy"
             feeds_needed = 3
-            evolved = False
-            if dino.stage != "adult" and feed_actions >= feeds_needed:
+            # Check if this feed will cause evolution
+            if dino.stage != "adult" and (feed_actions + 1) >= feeds_needed:
                 dino.stage = "adult"
                 outcome += f" 🦉 {dino.name} has evolved into an Adult!"
                 messages.success(request, f"{dino.name} evolved into an Adult!")
@@ -557,7 +558,7 @@ def perform_action(request, dino_id):
         elif action_type == "train":
             outcome = f"{dino.name} trained hard and grew stronger!"
             dino.mood = "tired"
-            dino.level_up()  # training increases level
+            dino.level_up()
             if dino.level == 100:
                 messages.success(request, f"{dino.name} reached the max level 100!")
         elif action_type == "wilderness_search" and dino.stage == "juvenile":
@@ -576,6 +577,7 @@ def perform_action(request, dino_id):
                     dino.mood = "hungry"
                     messages.info(request, outcome)
         dino.save()
+        # Always create the action for what was performed
         RaiseAction.objects.create(
             dinosaur=dino,
             action_type=action_type,
@@ -591,7 +593,50 @@ def perform_action(request, dino_id):
             from django.urls import reverse
             url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
             return redirect(url)
-        # Pass evolution modal flag via GET param
+        trait_levels = [2, 26, 51, 76, 99]
+        if action_type == "train" and dino.stage in ["juvenile", "adult"] and dino.level in trait_levels and dino.traits.count() < 5:
+            trait_action_exists = RaiseAction.objects.filter(dinosaur=dino, action_type="trait_unlock", outcome__icontains=f"level {dino.level}").exists()
+            if not trait_action_exists:
+                import random
+                all_traits = list(Trait.objects.exclude(pk__in=dino.traits.values_list('pk', flat=True)))
+                if all_traits:
+                    trait = random.choice(all_traits)
+                    dino.traits.add(trait)
+                    dino.save()
+                    outcome_text = f"{dino.name} unlocked a new trait: {trait.name}! (level {dino.level})"
+                    RaiseAction.objects.create(
+                        dinosaur=dino,
+                        action_type="trait_unlock",
+                        outcome=outcome_text
+                    )
+                    messages.success(request, f"{dino.name} unlocked a new trait: {trait.name}!")
+                    from django.urls import reverse
+                    from django.utils.http import urlencode
+                    params = urlencode({
+                        'trait_unlocked': 1,
+                        'trait_name': trait.name,
+                        'trait_description': trait.description
+                    })
+                    url = reverse("dinosaur_detail", args=[dino.id]) + f"?{params}"
+                    return redirect(url)
+        return redirect("dinosaur_detail", dino_id=dino.id)
+        dino.save()
+        RaiseAction.objects.create(
+            dinosaur=dino,
+            action_type=action_type,
+            outcome=outcome
+        )
+    # Add a separate action for evolution if it just happened
+        if action_type == "feed" and evolved:
+            RaiseAction.objects.create(
+                dinosaur=dino,
+                action_type="evolve",
+                outcome=f"{dino.name} has evolved into an Adult!"
+            )
+            from django.urls import reverse
+            url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
+            return redirect(url)
+    # Pass evolution modal flag via GET param
         if action_type == "feed" and evolved:
             from django.urls import reverse
             url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
