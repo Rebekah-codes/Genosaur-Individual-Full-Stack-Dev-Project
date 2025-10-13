@@ -1,3 +1,4 @@
+
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout, login as auth_login
@@ -13,17 +14,6 @@ from django.conf import settings
 import logging
 import random
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import logout as auth_logout, login as auth_login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.utils.crypto import get_random_string
-from django.contrib import messages
-from django.views.decorators.csrf import csrf_protect
-from .models import Trade
-from django.db.models import Q
-from django import forms
-from django.core.exceptions import ValidationError
 
 
 # Decline a trade offer as the receiver
@@ -31,23 +21,36 @@ from django.core.exceptions import ValidationError
 def decline_trade(request, trade_id):
     if request.method == 'POST':
         # Get the pending trade for the current user
-        trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
+        trade = get_object_or_404(
+            Trade,
+            id=trade_id,
+            receiver=request.user,
+            status='pending'
+        )
         trade.status = 'declined'
         trade.save()
         messages.success(request, 'Trade offer declined.')
     return redirect('trade_center')
 
+
 # Cancel a trade offer as the sender
 @login_required
 def cancel_trade(request, trade_id):
-    trade = get_object_or_404(Trade, id=trade_id, sender=request.user, status='pending')
+    trade = get_object_or_404(
+        Trade,
+        id=trade_id,
+        sender=request.user,
+        status='pending'
+    )
     trade.status = 'declined'
     trade.save()
     messages.success(request, 'Trade offer cancelled.')
     return redirect('trade_center')
 
+
 # Form for creating and validating trades between users
 class TradeForm(forms.ModelForm):
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
@@ -58,7 +61,6 @@ class TradeForm(forms.ModelForm):
         receiver = None
         # Dynamically set receiver's choices if available
         if self.data.get('receiver'):
-            from django.contrib.auth import get_user_model
             User = get_user_model()
             try:
                 receiver = User.objects.get(pk=self.data.get('receiver'))
@@ -72,27 +74,33 @@ class TradeForm(forms.ModelForm):
 
     class Meta:
         model = Trade
-        fields = ['receiver', 'sender_egg', 'sender_dinosaur', 'receiver_egg', 'receiver_dinosaur']
+        fields = [
+            'receiver',
+            'sender_egg',
+            'sender_dinosaur',
+            'receiver_egg',
+            'receiver_dinosaur'
+        ]
 
     def clean(self):
         cleaned_data = super().clean()
-        sender_items = [cleaned_data.get('sender_egg'), cleaned_data.get('sender_dinosaur')]
-        receiver_items = [cleaned_data.get('receiver_egg'), cleaned_data.get('receiver_dinosaur')]
+        sender_items = [
+            cleaned_data.get('sender_egg'),
+            cleaned_data.get('sender_dinosaur')
+        ]
+        receiver_items = [
+            cleaned_data.get('receiver_egg'),
+            cleaned_data.get('receiver_dinosaur')
+        ]
         # Ensure only one item is offered/requested per trade
         if sum([item is not None for item in sender_items]) != 1:
-            raise ValidationError('You must offer exactly one item (egg or dinosaur).')
+            raise ValidationError(
+                'You must offer exactly one item (egg or dinosaur).'
+            )
         if sum([item is not None for item in receiver_items]) != 1:
-            raise ValidationError('You must request exactly one item (egg or dinosaur) in return.')
-        from django.contrib.auth import logout as auth_logout, login as auth_login
-        from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-        from django.utils.crypto import get_random_string
-        from django.contrib import messages
-        from django.views.decorators.csrf import csrf_protect
-        from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
-        from django.db.models import Q
-        from django import forms
-        from django.core.exceptions import ValidationError
-        import logging
+            raise ValidationError(
+                'You must request exactly one item (egg or dinosaur) in return.'
+            )
         return cleaned_data
 
 @login_required
