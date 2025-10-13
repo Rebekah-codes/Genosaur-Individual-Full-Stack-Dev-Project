@@ -129,7 +129,6 @@ def accept_trade(request, trade_id):
     trade.save()
     messages.success(request, 'Trade accepted and items swapped!')
     return redirect('trade_center')
-    # ...existing code...
 
 
 def wilderness(request):
