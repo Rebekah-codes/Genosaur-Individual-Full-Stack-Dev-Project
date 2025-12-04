@@ -33,8 +33,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
  
 DEBUG = False
 
- 
-ALLOWED_HOSTS = ['genosaur-individual-project-1a19b4196747.herokuapp.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'genosaur-individual-project-1a19b4196747.herokuapp.com',
+    'localhost',
+    '127.0.0.1'
+]
 
 
  
@@ -82,14 +85,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'genosaur_project.wsgi.application'
 
-
- 
-
- 
-
- 
 DATABASES = {
-   'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+    'default': dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
+    )
 }
 
 
@@ -97,16 +96,28 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'UserAttributeSimilarityValidator'
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'MinimumLengthValidator'
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'CommonPasswordValidator'
+        ),
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME': (
+            'django.contrib.auth.password_validation.'
+            'NumericPasswordValidator'
+        ),
     },
 ]
 

@@ -1,29 +1,25 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import logout as auth_logout, login as auth_login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import (
+    logout as auth_logout,
+    login as auth_login
+)
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserCreationForm
+)
 from django.utils.crypto import get_random_string
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
-from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
+from django.http import JsonResponse
 from django.db.models import Q
 from django import forms
 from django.core.exceptions import ValidationError
 from django.conf import settings
+from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
+
 import logging
 import random
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import logout as auth_logout, login as auth_login
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.utils.crypto import get_random_string
-from django.contrib import messages
-from django.views.decorators.csrf import csrf_protect
-from .models import Trade
-from django.db.models import Q
-from django import forms
-from django.core.exceptions import ValidationError
 
 
 # Decline a trade offer as the receiver
@@ -31,7 +27,12 @@ from django.core.exceptions import ValidationError
 def decline_trade(request, trade_id):
     if request.method == 'POST':
         # Get the pending trade for the current user
-        trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
+        trade = get_object_or_404(
+            Trade,
+            id=trade_id,
+            receiver=request.user,
+            status='pending'
+        )
         trade.status = 'declined'
         trade.save()
         messages.success(request, 'Trade offer declined.')
@@ -40,7 +41,12 @@ def decline_trade(request, trade_id):
 # Cancel a trade offer as the sender
 @login_required
 def cancel_trade(request, trade_id):
-    trade = get_object_or_404(Trade, id=trade_id, sender=request.user, status='pending')
+    trade = get_object_or_404(
+        Trade,
+        id=trade_id,
+        sender=request.user,
+        status='pending'
+    )
     trade.status = 'declined'
     trade.save()
     messages.success(request, 'Trade offer cancelled.')
@@ -206,7 +212,12 @@ def trade_center(request):
 
 @login_required
 def accept_trade(request, trade_id):
-    trade = get_object_or_404(Trade, id=trade_id, receiver=request.user, status='pending')
+    trade = get_object_or_404(
+        Trade,
+        id=trade_id,
+        receiver=request.user,
+        status='pending'
+    )
     if trade.sender_egg:
         trade.sender_egg.owner = trade.receiver
         trade.sender_egg.save()
@@ -239,7 +250,10 @@ def wilderness(request):
     user = request.user
     now = timezone.now()
     searches = request.session.get('wilderness_searches', [])
-    searches = [ts for ts in searches if timezone.datetime.fromisoformat(ts) > now - timedelta(hours=24)]
+    searches = [
+        ts for ts in searches
+        if timezone.datetime.fromisoformat(ts) > now - timedelta(hours=24)
+    ]
     can_search = len(searches) < 5
     found_egg = None
     message = None
@@ -249,9 +263,21 @@ def wilderness(request):
         if random.random() < 0.25:
             egg_color = random.choice(['green', 'orange', 'blue'])
             egg_data = {
-                'green': {'species_name': 'Green Egg', 'element_type': 'Earth', 'rarity': 'Common'},
-                'orange': {'species_name': 'Orange Egg', 'element_type': 'Fire', 'rarity': 'Common'},
-                'blue': {'species_name': 'Blue Egg', 'element_type': 'Water', 'rarity': 'Common'},
+                'green': {
+                    'species_name': 'Green Egg',
+                    'element_type': 'Earth',
+                    'rarity': 'Common'
+                },
+                'orange': {
+                    'species_name': 'Orange Egg',
+                    'element_type': 'Fire',
+                    'rarity': 'Common'
+                },
+                'blue': {
+                    'species_name': 'Blue Egg',
+                    'element_type': 'Water',
+                    'rarity': 'Common'
+                },
             }
             Egg.objects.create(
                 species_name=egg_data[egg_color]['species_name'],
@@ -270,10 +296,22 @@ def wilderness(request):
         "searches": searches,
         "user": user.username if user.is_authenticated else None
     })
-    return render(request, "wilderness.html", {"can_search": can_search, "message": message, "found_egg": found_egg})
+    return render(
+        request,
+        "wilderness.html",
+        {
+            "can_search": can_search,
+            "message": message,
+            "found_egg": found_egg
+        }
+    )
 def create_dinosaur_from_egg(egg):
     if not hasattr(egg, 'dinosaur') or egg.dinosaur is None:
-        dino_name = egg.name if egg.name else f"{egg.species_name}-{get_random_string(4)}"
+        dino_name = (
+            egg.name
+            if egg.name
+            else f"{egg.species_name}-{get_random_string(4)}"
+        )
         return Dinosaur.objects.create(
             name=dino_name,
             species_name=egg.species_name,
@@ -287,18 +325,33 @@ def create_dinosaur_from_egg(egg):
 @login_required
 def your_dinosaurs(request):
     dinosaurs = Dinosaur.objects.filter(owner=request.user)
-    print(f"DEBUG: Found {dinosaurs.count()} dinosaurs for user {request.user}")
+    print(
+        f"DEBUG: Found {dinosaurs.count()} "
+        f"dinosaurs for user {request.user}"
+    )
     for dino in dinosaurs:
         raw_species = dino.species_name
-        species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
+        species = (
+            raw_species.strip().lower()
+            .replace('_', ' ').replace('-', ' ')
+        )
         is_green_egg = 'green egg' in species
         is_orange_egg = 'orange egg' in species
         is_blue_egg = 'blue egg' in species
-        print(f"DEBUG: {dino.name} RAW species_name='{raw_species}' PROCESSED species='{species}' is_green_egg={is_green_egg} is_orange_egg={is_orange_egg} is_blue_egg={is_blue_egg} stage='{dino.stage}'")
+        print(
+            f"DEBUG: {dino.name} RAW species_name='{raw_species}' "
+            f"PROCESSED species='{species}' is_green_egg={is_green_egg} "
+            f"is_orange_egg={is_orange_egg} is_blue_egg={is_blue_egg} "
+            f"stage='{dino.stage}'"
+        )
         if dino.stage == 'adult':
             if is_green_egg:
-                dino.image_path = "images/adult_dinos/green_rex_adult.png"
-                print(f"DEBUG: {dino.name} assigned adult GREEN image")
+                dino.image_path = (
+                    "images/adult_dinos/green_rex_adult.png"
+                )
+                print(
+                    f"DEBUG: {dino.name} assigned adult GREEN image"
+                )
             elif is_orange_egg:
                 dino.image_path = "images/adult_dinos/orange_trike_adult.png"
                 print(f"DEBUG: {dino.name} assigned adult ORANGE image")
@@ -310,19 +363,47 @@ def your_dinosaurs(request):
                 print(f"DEBUG: {dino.name} assigned adult DEFAULT image")
         else:
             if is_green_egg:
-                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
-                print(f"DEBUG: {dino.name} assigned juvenile GREEN image")
+                dino.image_path = (
+                    "images/juvenile_dinos/green_rex_juvie.png"
+                )
+                print(
+                    f"DEBUG: {dino.name} assigned juvenile "
+                    f"GREEN image"
+                )
             elif is_orange_egg:
-                dino.image_path = "images/juvenile_dinos/orange_trike_juvie.png"
-                print(f"DEBUG: {dino.name} assigned juvenile ORANGE image")
+                dino.image_path = (
+                    "images/juvenile_dinos/orange_trike_juvie.png"
+                )
+                print(
+                    f"DEBUG: {dino.name} assigned juvenile "
+                    f"ORANGE image"
+                )
             elif is_blue_egg:
-                dino.image_path = "images/juvenile_dinos/blue_spino_juvie.png"
-                print(f"DEBUG: {dino.name} assigned juvenile BLUE image")
+                dino.image_path = (
+                    "images/juvenile_dinos/blue_spino_juvie.png"
+                )
+                print(
+                    f"DEBUG: {dino.name} assigned juvenile "
+                    f"BLUE image"
+                )
             else:
-                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
-                print(f"DEBUG: {dino.name} assigned juvenile DEFAULT image")
-        print(f"DEBUG: {dino.name} FINAL image_path='{dino.image_path}' for RAW species_name='{raw_species}' PROCESSED species='{species}'")
-    return render(request, 'your_dinosaurs.html', {'dinosaurs': dinosaurs})
+                dino.image_path = (
+                    "images/juvenile_dinos/green_rex_juvie.png"
+                )
+                print(
+                    f"DEBUG: {dino.name} assigned juvenile "
+                    f"DEFAULT image"
+                )
+        print(
+            f"DEBUG: {dino.name} FINAL image_path='{dino.image_path}' "
+            f"for RAW species_name='{raw_species}' "
+            f"PROCESSED species='{species}'"
+        )
+    return render(
+        request,
+        'your_dinosaurs.html',
+        {'dinosaurs': dinosaurs}
+    )
 from django.contrib.auth import get_user_model
 
 @login_required
@@ -340,11 +421,30 @@ def dashboard(request):
                 'blue': 'blue_spino_juvie.png',
                 'orange': 'orange_trike_juvie.png',
             }
-            dino.image_path = f"images/juvenile_dinos/{image_map.get(color, 'green_rex_juvie.png')}"
-        return render(request, 'dashboard.html', {'has_egg': has_egg, 'juvenile_dinos': juvenile_dinos, 'has_dino': has_dino})
+            dino.image_path = (
+                f"images/juvenile_dinos/"
+                f"{image_map.get(color, 'green_rex_juvie.png')}"
+            )
+        return render(
+            request,
+            'dashboard.html',
+            {
+                'has_egg': has_egg,
+                'juvenile_dinos': juvenile_dinos,
+                'has_dino': has_dino
+            }
+        )
     except Exception as e:
         logging.error(f"Dashboard error: {e}")
-        return render(request, 'dashboard.html', {'has_egg': False, 'juvenile_dinos': [], 'error': str(e)})
+        return render(
+            request,
+            'dashboard.html',
+            {
+                'has_egg': False,
+                'juvenile_dinos': [],
+                'error': str(e)
+            }
+        )
 
 from django.views.decorators.csrf import csrf_protect
 @login_required
@@ -353,9 +453,21 @@ def claim_egg(request):
     if request.method == 'POST':
         color = request.POST.get('egg_color')
         egg_data = {
-            'green': {'species_name': 'Green Egg', 'element_type': 'Earth', 'rarity': 'Common'},
-            'orange': {'species_name': 'Orange Egg', 'element_type': 'Fire', 'rarity': 'Common'},
-            'blue': {'species_name': 'Blue Egg', 'element_type': 'Water', 'rarity': 'Common'},
+            'green': {
+                'species_name': 'Green Egg',
+                'element_type': 'Earth',
+                'rarity': 'Common'
+            },
+            'orange': {
+                'species_name': 'Orange Egg',
+                'element_type': 'Fire',
+                'rarity': 'Common'
+            },
+            'blue': {
+                'species_name': 'Blue Egg',
+                'element_type': 'Water',
+                'rarity': 'Common'
+            },
         }
         if color in egg_data:
             Egg.objects.create(
@@ -364,8 +476,13 @@ def claim_egg(request):
                 rarity=egg_data[color]['rarity'],
                 owner=request.user
             )
-            article = 'an' if egg_data[color]['species_name'][0].lower() in 'aeiou' else 'a'
-            messages.success(request, f"You claimed {article} {egg_data[color]['species_name']}!")
+            species_name = egg_data[color]['species_name']
+            first_letter = species_name[0].lower()
+            article = 'an' if first_letter in 'aeiou' else 'a'
+            messages.success(
+                request,
+                f"You claimed {article} {species_name}!"
+            )
             return redirect('active_nests')
         else:
             messages.error(request, 'Invalid egg selection.')
@@ -389,7 +506,11 @@ def egg_detail(request, egg_id):
                 dino.delete()
             egg.delete()
             from django.contrib import messages
-            messages.success(request, "Your egg and dinosaur have been released to the wild!")
+            messages.success(
+                request,
+                "Your egg and dinosaur have been "
+                "released to the wild!"
+            )
             return redirect('active_nests')
         if not egg.is_hatched:
             if egg.twigs >= 5 and egg.leaves >= 5:
@@ -477,12 +598,31 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def home(request):
-    eggs = Egg.objects.filter(owner=request.user) if request.user.is_authenticated else Egg.objects.none()
-    has_egg = Egg.objects.filter(owner=request.user, is_hatched=False).exists() if request.user.is_authenticated else False
-    has_dino = Dinosaur.objects.filter(owner=request.user).exists() if request.user.is_authenticated else False
+    if request.user.is_authenticated:
+        eggs = Egg.objects.filter(owner=request.user)
+        has_egg = (
+            Egg.objects.filter(
+                owner=request.user,
+                is_hatched=False
+            ).exists()
+        )
+        has_dino = Dinosaur.objects.filter(
+            owner=request.user
+        ).exists()
+    else:
+        eggs = Egg.objects.none()
+        has_egg = False
+        has_dino = False
     import logging
-    logging.warning(f"DEBUG home: has_egg={has_egg}, has_dino={has_dino}, eggs={eggs.count()}")
-    return render(request, 'home.html', {'eggs': eggs, 'has_egg': has_egg, 'has_dino': has_dino})
+    logging.warning(
+        f"DEBUG home: has_egg={has_egg}, "
+        f"has_dino={has_dino}, eggs={eggs.count()}"
+    )
+    return render(
+        request,
+        'home.html',
+        {'eggs': eggs, 'has_egg': has_egg, 'has_dino': has_dino}
+    )
 
 def hatch_egg(request, egg_id):
     egg = get_object_or_404(Egg, id=egg_id)
@@ -506,7 +646,11 @@ def dinosaur_detail(request, dino_id):
             if 'release_dino' in request.POST:
                 dino.delete()
                 from django.contrib import messages
-                messages.success(request, "Your dinosaur has been released to the wild!")
+                messages.success(
+                    request,
+                    "Your dinosaur has been released "
+                    "to the wild!"
+                )
                 return redirect('your_dinosaurs')
             elif 'set_dino_name' in request.POST:
                 new_name = request.POST.get('dino_name', '').strip()
@@ -514,10 +658,16 @@ def dinosaur_detail(request, dino_id):
                     dino.name = new_name
                     dino.save()
                     from django.contrib import messages
-                    messages.success(request, f"Dinosaur named '{new_name}'!")
+                    messages.success(
+                        request,
+                        f"Dinosaur named '{new_name}'!"
+                    )
                 else:
                     from django.contrib import messages
-                    messages.error(request, "Dinosaur name cannot be empty.")
+                    messages.error(
+                        request,
+                        "Dinosaur name cannot be empty."
+                    )
         actions = dino.actions.order_by('-timestamp')
         total_actions = dino.actions.count()
         feed_actions = dino.actions.filter(action_type="feed").count()
@@ -525,8 +675,14 @@ def dinosaur_detail(request, dino_id):
         actions_needed = 5
         feed_progress = min(feed_actions, feeds_needed)
         action_progress = min(total_actions, actions_needed)
-        feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
-        action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
+        feed_percent = (
+            int((feed_progress / feeds_needed) * 100)
+            if feeds_needed else 0
+        )
+        action_percent = (
+            int((action_progress / actions_needed) * 100)
+            if actions_needed else 0
+        )
         feed_complete = feed_progress >= feeds_needed
         action_complete = action_progress >= actions_needed
         level_percent = int((dino.level / 100) * 100)
@@ -534,28 +690,47 @@ def dinosaur_detail(request, dino_id):
             dino.stage = 'adult'
             dino.save()
         raw_species = dino.species_name
-        species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
+        species = (
+            raw_species.strip().lower()
+            .replace('_', ' ').replace('-', ' ')
+        )
         is_green_egg = 'green egg' in species
         is_orange_egg = 'orange egg' in species
         is_blue_egg = 'blue egg' in species
         if dino.stage == 'adult':
             if is_green_egg:
-                dino.image_path = "images/adult_dinos/green_rex_adult.png"
+                dino.image_path = (
+                    "images/adult_dinos/green_rex_adult.png"
+                )
             elif is_orange_egg:
-                dino.image_path = "images/adult_dinos/orange_trike_adult.png"
+                dino.image_path = (
+                    "images/adult_dinos/orange_trike_adult.png"
+                )
             elif is_blue_egg:
-                dino.image_path = "images/adult_dinos/blue_spino_adult.png"
+                dino.image_path = (
+                    "images/adult_dinos/blue_spino_adult.png"
+                )
             else:
-                dino.image_path = "images/adult_dinos/green_rex_adult.png"
+                dino.image_path = (
+                    "images/adult_dinos/green_rex_adult.png"
+                )
         else:
             if is_green_egg:
-                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
+                dino.image_path = (
+                    "images/juvenile_dinos/green_rex_juvie.png"
+                )
             elif is_orange_egg:
-                dino.image_path = "images/juvenile_dinos/orange_trike_juvie.png"
+                dino.image_path = (
+                    "images/juvenile_dinos/orange_trike_juvie.png"
+                )
             elif is_blue_egg:
-                dino.image_path = "images/juvenile_dinos/blue_spino_juvie.png"
+                dino.image_path = (
+                    "images/juvenile_dinos/blue_spino_juvie.png"
+                )
             else:
-                dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
+                dino.image_path = (
+                    "images/juvenile_dinos/green_rex_juvie.png"
+                )
         return render(request, 'dinosaur_detail.html', {
             'dino': dino,
             'actions': actions,
@@ -571,26 +746,52 @@ def dinosaur_detail(request, dino_id):
         })
     except Exception as e:
         logging.error(f"Error in dinosaur_detail view: {e}")
-        return render(request, 'dinosaur_detail.html', {
-            'dino': None,
-            'actions': [],
-            'error': str(e),
-        })
+        return render(
+            request,
+            'dinosaur_detail.html',
+            {
+                'dino': None,
+                'actions': [],
+                'error': str(e),
+            }
+        )
 
 from django.conf import settings
 @login_required
 def hatching_page(request, egg_id):
-    egg = get_object_or_404(Egg, id=egg_id, owner=request.user)
+    egg = get_object_or_404(
+        Egg,
+        id=egg_id,
+        owner=request.user
+    )
     color = egg.species_name.split()[0].lower()
-    image_path = f"images/hatching_egg/{color}_hatching_egg.png"
-    message = "Congratulations! Your egg is hatching!"
+    image_path = (
+        f"images/hatching_egg/{color}_hatching_egg.png"
+    )
+    message = (
+        "Congratulations! Your egg is hatching!"
+    )
     egg_name = egg.name if egg.name else egg.species_name
     egg.delete()
-    return render(request, "hatching_page.html", {"egg_name": egg_name, "image_path": image_path, "message": message})
+    return render(
+        request,
+        "hatching_page.html",
+        {
+            "egg_name": egg_name,
+            "image_path": image_path,
+            "message": message
+        }
+    )
     feed_progress = min(feed_actions, feeds_needed)
     action_progress = min(total_actions, actions_needed)
-    feed_percent = int((feed_progress / feeds_needed) * 100) if feeds_needed else 0
-    action_percent = int((action_progress / actions_needed) * 100) if actions_needed else 0
+    feed_percent = (
+        int((feed_progress / feeds_needed) * 100)
+        if feeds_needed else 0
+    )
+    action_percent = (
+        int((action_progress / actions_needed) * 100)
+        if actions_needed else 0
+    )
     feed_complete = feed_progress >= feeds_needed
     action_complete = action_progress >= actions_needed
     level_percent = int((dino.level / 100) * 100)
@@ -624,54 +825,95 @@ def perform_action(request, dino_id):
             
             if dino.stage != "adult" and (feed_actions + 1) >= feeds_needed:
                 dino.stage = "adult"
-                outcome += f" 🦉 {dino.name} has evolved into an Adult!"
-                messages.success(request, f"{dino.name} evolved into an Adult!")
+                outcome += (
+                    f" 🦉 {dino.name} has evolved into "
+                    f"an Adult!"
+                )
+                messages.success(
+                    request,
+                    f"{dino.name} evolved into an Adult!"
+                )
                 evolved = True
             raw_species = dino.species_name
-            species = raw_species.strip().lower().replace('_', ' ').replace('-', ' ')
+            species = (
+                raw_species.strip().lower()
+                .replace('_', ' ').replace('-', ' ')
+            )
             is_green_egg = 'green egg' in species
             is_orange_egg = 'orange egg' in species
             is_blue_egg = 'blue egg' in species
             if dino.stage == 'adult':
                 if is_green_egg:
-                    dino.image_path = "images/adult_dinos/green_rex_adult.png"
+                    dino.image_path = (
+                        "images/adult_dinos/green_rex_adult.png"
+                    )
                 elif is_orange_egg:
-                    dino.image_path = "images/adult_dinos/orange_trike_adult.png"
+                    dino.image_path = (
+                        "images/adult_dinos/orange_trike_adult.png"
+                    )
                 elif is_blue_egg:
-                    dino.image_path = "images/adult_dinos/blue_spino_adult.png"
+                    dino.image_path = (
+                        "images/adult_dinos/blue_spino_adult.png"
+                    )
                 else:
-                    dino.image_path = "images/adult_dinos/green_rex_adult.png"
+                    dino.image_path = (
+                        "images/adult_dinos/green_rex_adult.png"
+                    )
             else:
                 if is_green_egg:
-                    dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
+                    dino.image_path = (
+                        "images/juvenile_dinos/green_rex_juvie.png"
+                    )
                 elif is_orange_egg:
-                    dino.image_path = "images/juvenile_dinos/orange_trike_juvie.png"
+                    dino.image_path = (
+                        "images/juvenile_dinos/orange_trike_juvie.png"
+                    )
                 elif is_blue_egg:
-                    dino.image_path = "images/juvenile_dinos/blue_spino_juvie.png"
+                    dino.image_path = (
+                        "images/juvenile_dinos/blue_spino_juvie.png"
+                    )
                 else:
-                    dino.image_path = "images/juvenile_dinos/green_rex_juvie.png"
+                    dino.image_path = (
+                        "images/juvenile_dinos/green_rex_juvie.png"
+                    )
         elif action_type == "play":
             outcome = f"{dino.name} had fun playing!"
             dino.mood = "playful"
         elif action_type == "train":
-            outcome = f"{dino.name} trained hard and grew stronger!"
+            outcome = (
+                f"{dino.name} trained hard and "
+                f"grew stronger!"
+            )
             dino.mood = "tired"
             dino.level_up()
             if dino.level == 100:
-                messages.success(request, f"{dino.name} reached the max level 100!")
+                messages.success(
+                    request,
+                    f"{dino.name} reached the "
+                    f"max level 100!"
+                )
         elif action_type == "wilderness_search" and dino.stage == "juvenile":
             if dino.twigs >= 5 or dino.leaves >= 5:
-                outcome = f"{dino.name} searched the wilderness but didn't find anything (max resources reached)."
+                outcome = (
+                    f"{dino.name} searched the wilderness but didn't "
+                    f"find anything (max resources reached)."
+                )
                 dino.mood = "hungry"
                 messages.info(request, outcome)
             else:
                 import random
                 if random.random() < 0.6:
-                    outcome = f"{dino.name} found some delicious food in the wilderness!"
+                    outcome = (
+                        f"{dino.name} found some delicious "
+                        f"food in the wilderness!"
+                    )
                     dino.mood = "happy"
                     messages.success(request, outcome)
                 else:
-                    outcome = f"{dino.name} searched the wilderness but found nothing this time."
+                    outcome = (
+                        f"{dino.name} searched the wilderness but "
+                        f"found nothing this time."
+                    )
                     dino.mood = "hungry"
                     messages.info(request, outcome)
         dino.save()
@@ -686,76 +928,57 @@ def perform_action(request, dino_id):
             RaiseAction.objects.create(
                 dinosaur=dino,
                 action_type="evolve",
-                outcome=f"{dino.name} has evolved into an Adult!"
+                outcome=(
+                    f"{dino.name} has evolved into "
+                    f"an Adult!"
+                )
             )
             from django.urls import reverse
-            url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
+            url = (
+                reverse("dinosaur_detail", args=[dino.id])
+                + "?evolved=1"
+            )
             return redirect(url)
         trait_levels = [2, 26, 51, 76, 99]
-        if action_type == "train" and dino.stage in ["juvenile", "adult"] and dino.level in trait_levels and dino.traits.count() < 5:
-            trait_action_exists = RaiseAction.objects.filter(dinosaur=dino, action_type="trait_unlock", outcome__icontains=f"level {dino.level}").exists()
-            if not trait_action_exists:
-                import random
-                all_traits = list(Trait.objects.exclude(pk__in=dino.traits.values_list('pk', flat=True)))
-                if all_traits:
-                    trait = random.choice(all_traits)
-                    dino.traits.add(trait)
-                    dino.save()
-                    outcome_text = f"{dino.name} unlocked a new trait: {trait.name}! (level {dino.level})"
-                    RaiseAction.objects.create(
-                        dinosaur=dino,
-                        action_type="trait_unlock",
-                        outcome=outcome_text
-                    )
-                    messages.success(request, f"{dino.name} unlocked a new trait: {trait.name}!")
-                    from django.urls import reverse
-                    from django.utils.http import urlencode
-                    params = urlencode({
-                        'trait_unlocked': 1,
-                        'trait_name': trait.name,
-                        'trait_description': trait.description
-                    })
-                    url = reverse("dinosaur_detail", args=[dino.id]) + f"?{params}"
-                    return redirect(url)
-        return redirect("dinosaur_detail", dino_id=dino.id)
-        dino.save()
-        RaiseAction.objects.create(
-            dinosaur=dino,
-            action_type=action_type,
-            outcome=outcome
+        is_trainable = (
+            action_type == "train"
+            and dino.stage in ["juvenile", "adult"]
+            and dino.level in trait_levels
+            and dino.traits.count() < 5
         )
-    # Add a separate action for evolution if it just happened
-        if action_type == "feed" and evolved:
-            RaiseAction.objects.create(
+        if is_trainable:
+            trait_action_exists = RaiseAction.objects.filter(
                 dinosaur=dino,
-                action_type="evolve",
-                outcome=f"{dino.name} has evolved into an Adult!"
-            )
-            from django.urls import reverse
-            url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
-            return redirect(url)
-    # Pass evolution modal flag via GET param
-        if action_type == "feed" and evolved:
-            from django.urls import reverse
-            url = reverse("dinosaur_detail", args=[dino.id]) + "?evolved=1"
-            return redirect(url)
-        trait_levels = [2, 26, 51, 76, 99]
-        if action_type == "train" and dino.stage in ["juvenile", "adult"] and dino.level in trait_levels and dino.traits.count() < 5:
-            trait_action_exists = RaiseAction.objects.filter(dinosaur=dino, action_type="trait_unlock", outcome__icontains=f"level {dino.level}").exists()
+                action_type="trait_unlock",
+                outcome__icontains=f"level {dino.level}"
+            ).exists()
             if not trait_action_exists:
                 import random
-                all_traits = list(Trait.objects.exclude(pk__in=dino.traits.values_list('pk', flat=True)))
+                all_traits = list(
+                    Trait.objects.exclude(
+                        pk__in=dino.traits.values_list(
+                            'pk', flat=True
+                        )
+                    )
+                )
                 if all_traits:
                     trait = random.choice(all_traits)
                     dino.traits.add(trait)
                     dino.save()
-                    outcome_text = f"{dino.name} unlocked a new trait: {trait.name}! (level {dino.level})"
+                    outcome_text = (
+                        f"{dino.name} unlocked a new trait: "
+                        f"{trait.name}! (level {dino.level})"
+                    )
                     RaiseAction.objects.create(
                         dinosaur=dino,
                         action_type="trait_unlock",
                         outcome=outcome_text
                     )
-                    messages.success(request, f"{dino.name} unlocked a new trait: {trait.name}!")
+                    messages.success(
+                        request,
+                        f"{dino.name} unlocked a new trait: "
+                        f"{trait.name}!"
+                    )
                     from django.urls import reverse
                     from django.utils.http import urlencode
                     params = urlencode({
@@ -763,6 +986,9 @@ def perform_action(request, dino_id):
                         'trait_name': trait.name,
                         'trait_description': trait.description
                     })
-                    url = reverse("dinosaur_detail", args=[dino.id]) + f"?{params}"
+                    url = (
+                        reverse("dinosaur_detail", args=[dino.id])
+                        + f"?{params}"
+                    )
                     return redirect(url)
         return redirect("dinosaur_detail", dino_id=dino.id)
