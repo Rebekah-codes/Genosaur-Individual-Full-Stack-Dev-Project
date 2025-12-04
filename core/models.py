@@ -220,11 +220,7 @@ class Trade(models.Model):
     def __str__(self):
         sender_item = self.sender_egg or self.sender_dinosaur
         receiver_item = self.receiver_egg or self.receiver_dinosaur
-        trade_str = (
+        return (
             f"Trade: {sender_item} for {receiver_item} "
             f"({self.status})"
-        )
-        return (
-              f"Trade: {sender_item} for {receiver_item} "
-              f"({self.status})"
         )
