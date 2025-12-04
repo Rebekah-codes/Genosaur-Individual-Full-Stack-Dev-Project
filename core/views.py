@@ -46,69 +46,163 @@ def cancel_trade(request, trade_id):
     messages.success(request, 'Trade offer cancelled.')
     return redirect('trade_center')
 
+
+# AJAX endpoint to fetch items for a selected receiver
+@login_required
+def get_receiver_items(request):
+    from django.http import JsonResponse
+    from django.contrib.auth import get_user_model
+    
+    User = get_user_model()
+    receiver_id = request.GET.get('receiver_id')
+    
+    if not receiver_id:
+        return JsonResponse({'error': 'No receiver selected'}, status=400)
+    
+    try:
+        receiver = User.objects.get(pk=receiver_id)
+    except User.DoesNotExist:
+        return JsonResponse(
+            {'error': 'Receiver not found'},
+            status=404
+        )
+    
+    # Get receiver's eggs and dinosaurs
+    eggs = [
+        {'id': egg.id, 'name': str(egg)}
+        for egg in receiver.eggs.filter(is_hatched=False)
+    ]
+    dinosaurs = [
+        {'id': dino.id, 'name': str(dino)}
+        for dino in receiver.dinosaurs.all()
+    ]
+    
+    return JsonResponse({
+        'eggs': eggs,
+        'dinosaurs': dinosaurs
+    })
+
 # Form for creating and validating trades between users
 class TradeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        
         # Limit sender's choices to their own eggs and dinosaurs
         if user:
-            self.fields['sender_egg'].queryset = user.eggs.all()
-            self.fields['sender_dinosaur'].queryset = user.dinosaurs.all()
+            self.fields['sender_egg'].queryset = (
+                user.eggs.filter(is_hatched=False)
+            )
+            self.fields['sender_dinosaur'].queryset = (
+                user.dinosaurs.all()
+            )
+        
+        # Get receiver from POST data or initial data
         receiver = None
-        # Dynamically set receiver's choices if available
         if self.data.get('receiver'):
             from django.contrib.auth import get_user_model
             User = get_user_model()
             try:
-                receiver = User.objects.get(pk=self.data.get('receiver'))
+                receiver_id = int(self.data.get('receiver'))
+                receiver = User.objects.get(pk=receiver_id)
             except (User.DoesNotExist, ValueError, TypeError):
                 receiver = None
         elif self.initial.get('receiver'):
             receiver = self.initial.get('receiver')
+        
+        # Set receiver items based on selected receiver
         if receiver:
-            self.fields['receiver_egg'].queryset = receiver.eggs.all()
-            self.fields['receiver_dinosaur'].queryset = receiver.dinosaurs.all()
+            self.fields['receiver_egg'].queryset = (
+                receiver.eggs.filter(is_hatched=False)
+            )
+            self.fields['receiver_dinosaur'].queryset = (
+                receiver.dinosaurs.all()
+            )
+        else:
+            # Empty querysets if no receiver selected
+            self.fields['receiver_egg'].queryset = (
+                Egg.objects.none()
+            )
+            self.fields['receiver_dinosaur'].queryset = (
+                Dinosaur.objects.none()
+            )
 
     class Meta:
         model = Trade
-        fields = ['receiver', 'sender_egg', 'sender_dinosaur', 'receiver_egg', 'receiver_dinosaur']
+        fields = [
+            'receiver',
+            'sender_egg',
+            'sender_dinosaur',
+            'receiver_egg',
+            'receiver_dinosaur'
+        ]
 
     def clean(self):
         cleaned_data = super().clean()
-        sender_items = [cleaned_data.get('sender_egg'), cleaned_data.get('sender_dinosaur')]
-        receiver_items = [cleaned_data.get('receiver_egg'), cleaned_data.get('receiver_dinosaur')]
-        # Ensure only one item is offered/requested per trade
+        
+        # Validate receiver is selected
+        if not cleaned_data.get('receiver'):
+            raise ValidationError(
+                'Please select a receiver.'
+            )
+        
+        # Validate sender offers exactly one item
+        sender_items = [
+            cleaned_data.get('sender_egg'),
+            cleaned_data.get('sender_dinosaur')
+        ]
         if sum([item is not None for item in sender_items]) != 1:
-            raise ValidationError('You must offer exactly one item (egg or dinosaur).')
+            raise ValidationError(
+                'You must offer exactly one item '
+                '(egg or dinosaur).'
+            )
+        
+        # Validate receiver requests exactly one item
+        receiver_items = [
+            cleaned_data.get('receiver_egg'),
+            cleaned_data.get('receiver_dinosaur')
+        ]
         if sum([item is not None for item in receiver_items]) != 1:
-            raise ValidationError('You must request exactly one item (egg or dinosaur) in return.')
-        from django.contrib.auth import logout as auth_logout, login as auth_login
-        from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-        from django.utils.crypto import get_random_string
-        from django.contrib import messages
-        from django.views.decorators.csrf import csrf_protect
-        from .models import Trade, Egg, Dinosaur, RaiseAction, Trait
-        from django.db.models import Q
-        from django import forms
-        from django.core.exceptions import ValidationError
-        import logging
+            raise ValidationError(
+                'You must request exactly one item '
+                '(egg or dinosaur) in return.'
+            )
+        
         return cleaned_data
 
 @login_required
 def trade_center(request):
-    trades = Trade.objects.filter(Q(sender=request.user) | Q(receiver=request.user)).order_by('-created_at')
+    trades = Trade.objects.filter(
+        Q(sender=request.user) | Q(receiver=request.user)
+    ).order_by('-created_at')
     form = TradeForm(user=request.user)
+    
     if request.method == 'POST':
         form = TradeForm(request.POST, user=request.user)
-        if form.is_valid():
-            trade = form.save(commit=False)
-            trade.sender = request.user
-            trade.status = 'pending'
-            trade.save()
-            messages.success(request, 'Trade offer submitted!')
-            return redirect('trade_center')
-    return render(request, 'trade_center.html', {'form': form, 'trades': trades, 'user': request.user})
+        try:
+            if form.is_valid():
+                trade = form.save(commit=False)
+                trade.sender = request.user
+                trade.status = 'pending'
+                trade.save()
+                messages.success(request, 'Trade offer submitted!')
+                return redirect('trade_center')
+            else:
+                # Display form errors as messages
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, f"{error}")
+        except Exception as e:
+            messages.error(
+                request,
+                f"Error submitting trade: {str(e)}"
+            )
+    
+    return render(request, 'trade_center.html', {
+        'form': form,
+        'trades': trades,
+        'user': request.user
+    })
 
 @login_required
 def accept_trade(request, trade_id):

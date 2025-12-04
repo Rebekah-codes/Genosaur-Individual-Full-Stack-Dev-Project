@@ -3,6 +3,7 @@ from django.urls import path
 
 urlpatterns = [
     path('trade-center/cancel/<int:trade_id>/', views.cancel_trade, name='cancel_trade'),
+    path('api/receiver-items/', views.get_receiver_items, name='get_receiver_items'),
     path('', views.landing, name='landing'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('wilderness/', views.wilderness, name='wilderness'),

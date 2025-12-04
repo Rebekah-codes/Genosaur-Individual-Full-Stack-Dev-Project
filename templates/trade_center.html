@@ -3,15 +3,105 @@
 <div class="container mt-4 main-content">
   <h2 class="mb-4">Trade Center</h2>
   <div class="card mb-4">
-  <div class="card-body main-content">
+    <div class="card-body main-content">
       <h5 class="card-title">Propose a Trade</h5>
-      <form method="post">
+      <form method="post" id="trade-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-brown">Submit Trade Offer</button>
+        
+        <!-- Display form errors -->
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+        
+        <!-- Receiver Selection -->
+        <div class="mb-3">
+          <label for="{{ form.receiver.id_for_label }}" class="form-label">
+            Select Receiver
+          </label>
+          {{ form.receiver }}
+          {% if form.receiver.errors %}
+            <div class="text-danger">
+              {{ form.receiver.errors }}
+            </div>
+          {% endif %}
+          <small class="form-text text-muted">
+            Select the user you want to trade with.
+          </small>
+        </div>
+
+        <!-- Your Items to Offer -->
+        <fieldset class="border p-3 mb-3">
+          <legend class="float-none w-auto">What You're Offering</legend>
+          <div class="mb-3">
+            <label for="{{ form.sender_egg.id_for_label }}" class="form-label">
+              Egg to Offer (optional)
+            </label>
+            {{ form.sender_egg }}
+            {% if form.sender_egg.errors %}
+              <div class="text-danger">
+                {{ form.sender_egg.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.sender_dinosaur.id_for_label }}" class="form-label">
+              Dinosaur to Offer (optional)
+            </label>
+            {{ form.sender_dinosaur }}
+            {% if form.sender_dinosaur.errors %}
+              <div class="text-danger">
+                {{ form.sender_dinosaur.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <small class="form-text text-muted">
+            Select exactly ONE item to offer.
+          </small>
+        </fieldset>
+
+        <!-- Receiver's Items to Request -->
+        <fieldset class="border p-3 mb-3">
+          <legend class="float-none w-auto">
+            What You're Requesting from {{ form.receiver.value|default:"Receiver" }}
+          </legend>
+          <div class="mb-3">
+            <label for="{{ form.receiver_egg.id_for_label }}" class="form-label">
+              Egg to Request (optional)
+            </label>
+            {{ form.receiver_egg }}
+            {% if form.receiver_egg.errors %}
+              <div class="text-danger">
+                {{ form.receiver_egg.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.receiver_dinosaur.id_for_label }}" class="form-label">
+              Dinosaur to Request (optional)
+            </label>
+            {{ form.receiver_dinosaur }}
+            {% if form.receiver_dinosaur.errors %}
+              <div class="text-danger">
+                {{ form.receiver_dinosaur.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <small class="form-text text-muted">
+            Select exactly ONE item to request.
+          </small>
+        </fieldset>
+
+        <button type="submit" class="btn btn-brown">
+          Submit Trade Offer
+        </button>
       </form>
     </div>
   </div>
+
   <h4>Pending Trades</h4>
   <table class="table table-striped main-content">
     <thead>
@@ -28,32 +118,116 @@
       {% for trade in trades %}
       <tr>
         <td>{{ trade.sender.username }}</td>
-        <td>{% if trade.sender_egg %}Egg: {{ trade.sender_egg }}{% elif trade.sender_dinosaur %}Dino: {{ trade.sender_dinosaur }}{% endif %}</td>
+        <td>
+          {% if trade.sender_egg %}
+            🥚 {{ trade.sender_egg }}
+          {% elif trade.sender_dinosaur %}
+            🦖 {{ trade.sender_dinosaur }}
+          {% endif %}
+        </td>
         <td>{{ trade.receiver.username }}</td>
-        <td>{% if trade.receiver_egg %}Egg: {{ trade.receiver_egg }}{% elif trade.receiver_dinosaur %}Dino: {{ trade.receiver_dinosaur }}{% endif %}</td>
-        <td>{{ trade.status }}</td>
+        <td>
+          {% if trade.receiver_egg %}
+            🥚 {{ trade.receiver_egg }}
+          {% elif trade.receiver_dinosaur %}
+            🦖 {{ trade.receiver_dinosaur }}
+          {% endif %}
+        </td>
+        <td>
+          <span class="badge 
+            {% if trade.status == 'pending' %}
+              bg-warning
+            {% elif trade.status == 'accepted' %}
+              bg-success
+            {% else %}
+              bg-danger
+            {% endif %}">
+            {{ trade.status|title }}
+          </span>
+        </td>
         <td>
           {% if trade.status == 'pending' and trade.receiver == user %}
-            <a href="{% url 'accept_trade' trade.id %}" class="btn btn-success btn-sm">Accept</a>
+            <a href="{% url 'accept_trade' trade.id %}" class="btn btn-success btn-sm">
+              Accept
+            </a>
             <form method="post" action="{% url 'decline_trade' trade.id %}" style="display:inline;">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger btn-sm ms-2">Decline</button>
+              <button type="submit" class="btn btn-danger btn-sm ms-2">
+                Decline
+              </button>
             </form>
-          {% endif %}
-          {% if trade.status == 'pending' and trade.sender == user %}
-            <a href="{% url 'cancel_trade' trade.id %}" class="btn btn-danger btn-sm ms-2">Cancel</a>
-          {% endif %}
-          {% if not trade.status == 'pending' %}
-            -
-          {% elif trade.receiver != user and trade.sender != user %}
-            -
+          {% elif trade.status == 'pending' and trade.sender == user %}
+            <a href="{% url 'cancel_trade' trade.id %}" class="btn btn-danger btn-sm">
+              Cancel
+            </a>
+          {% else %}
+            —
           {% endif %}
         </td>
       </tr>
       {% empty %}
-      <tr><td colspan="6">No trades found.</td></tr>
+      <tr>
+        <td colspan="6" class="text-center text-muted">
+          No trades yet. Create one above!
+        </td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const receiverSelect = document.querySelector('select[name="receiver"]');
+  const receiverEggSelect = document.querySelector('select[name="receiver_egg"]');
+  const receiverDinoSelect = document.querySelector('select[name="receiver_dinosaur"]');
+
+  // Function to update receiver items when receiver changes
+  function updateReceiverItems() {
+    const receiverId = receiverSelect.value;
+
+    if (!receiverId) {
+      // Clear both dropdowns if no receiver selected
+      receiverEggSelect.innerHTML = '<option value="">---------</option>';
+      receiverDinoSelect.innerHTML = '<option value="">---------</option>';
+      return;
+    }
+
+    // Fetch items for the selected receiver
+    fetch(`/api/receiver-items/?receiver_id=${receiverId}`)
+      .then(response => response.json())
+      .then(data => {
+        // Update eggs dropdown
+        receiverEggSelect.innerHTML = '<option value="">---------</option>';
+        data.eggs.forEach(egg => {
+          const option = document.createElement('option');
+          option.value = egg.id;
+          option.textContent = egg.name;
+          receiverEggSelect.appendChild(option);
+        });
+
+        // Update dinosaurs dropdown
+        receiverDinoSelect.innerHTML = '<option value="">---------</option>';
+        data.dinosaurs.forEach(dino => {
+          const option = document.createElement('option');
+          option.value = dino.id;
+          option.textContent = dino.name;
+          receiverDinoSelect.appendChild(option);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching receiver items:', error);
+        alert('Error loading receiver items. Please try again.');
+      });
+  }
+
+  // Listen for changes to receiver dropdown
+  receiverSelect.addEventListener('change', updateReceiverItems);
+
+  // Initialize on page load if receiver is already selected
+  if (receiverSelect.value) {
+    updateReceiverItems();
+  }
+});
+</script>
 {% endblock %}
