@@ -939,18 +939,19 @@ def perform_action(request, dino_id):
                 + "?evolved=1"
             )
             return redirect(url)
-        trait_levels = [2, 26, 51, 76, 99]
-        is_trainable = (
-            action_type == "train"
-            and dino.stage in ["juvenile", "adult"]
-            and dino.level in trait_levels
+        # Check if we should unlock a trait based on action count
+        total_actions_now = dino.actions.count() + 1  # +1 for current action
+        action_milestones = [5, 30, 55, 80, 105]
+        should_unlock_trait = (
+            dino.stage in ["juvenile", "adult"]
+            and total_actions_now in action_milestones
             and dino.traits.count() < 5
         )
-        if is_trainable:
+        if should_unlock_trait:
             trait_action_exists = RaiseAction.objects.filter(
                 dinosaur=dino,
                 action_type="trait_unlock",
-                outcome__icontains=f"level {dino.level}"
+                outcome__icontains=f"{total_actions_now} actions"
             ).exists()
             if not trait_action_exists:
                 import random
@@ -967,7 +968,7 @@ def perform_action(request, dino_id):
                     dino.save()
                     outcome_text = (
                         f"{dino.name} unlocked a new trait: "
-                        f"{trait.name}! (level {dino.level})"
+                        f"{trait.name}! ({total_actions_now} actions)"
                     )
                     RaiseAction.objects.create(
                         dinosaur=dino,
